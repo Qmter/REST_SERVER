@@ -83,7 +83,16 @@ def list_connections_service(db, id_user, id_workspace):
     # if workspace["id_user"] != id_user:
     #     raise HTTPException(403, "Forbidden")
 
-    return get_connections_by_workspace(db=db, id_workspace=id_workspace)
+    connections = get_connections_by_workspace(db=db, id_workspace=id_workspace)
+
+    for conn in connections:
+        if conn.get("auth_data"):
+            try:
+                conn["auth_data"] = json.loads(conn["auth_data"])
+            except json.JSONDecodeError:
+                conn["auth_data"] = None
+
+    return connections
 
 
 def delete_connection_service(db, id_user, id_connection):

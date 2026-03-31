@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workspace</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <div class="sidebar">
+
+      <div class="sidebar-logo">
+        <img src="img/istok_light_logo.jpg" alt="Istok">
+      </div>
+
+      <h2>REST Tester</h2>
+
+      <div class="user-chip">
+        <img src="img/icons/user_icon.svg" alt="User" class="sidebar-icon">
+        <span id="sidebarUserName">Пользователь</span>
+      </div>
+
+      <ul>
+        <li onclick="window.location.href='dashboard.html#tests'">
+          <img src="img/icons/Logs.svg" alt="Результаты тестов" class="sidebar-icon">
+          <span>Результаты тестов</span>
+        </li>
+        <li onclick="window.location.href='dashboard.html#projects'">
+          <img src="img/icons/Project_ico.svg" alt="Проекты" class="sidebar-icon">
+          <span>Проекты</span>
+        </li>
+        <li onclick="logout()">
+          <img src="img/icons/Exit.svg" alt="Выйти" class="sidebar-icon">
+          <span>Выйти</span>
+        </li>
+      </ul>
+
+      <div class="theme-switcher">
+        <label for="themeSelect">Тема</label>
+        <select id="themeSelect">
+          <option value="dark">Тёмная</option>
+          <option value="light">Светлая</option>
+        </select>
+      </div>
+
+      <button
+        type="button"
+        class="sidebar-toggle"
+        id="sidebarToggle"
+        aria-label="Скрыть или показать меню"
+      >
+        <img
+          src="img/icons/ArrowLeftOutline.svg"
+          alt=""
+          id="sidebarToggleIcon"
+          aria-hidden="true"
+        >
+      </button>
+    </div>
+
+    <div class="content workspace-layout">
+      <section class="panel" id="workspaceInfo">
+        <div class="panel-header">
+          <h1 id="workspaceTitle">Workspace</h1>
+          <div class="actions">
+            <button type="button" class="ghost" id="backToProjects">← К проектам</button>
+            <button type="button" class="ghost danger" id="deleteWorkspaceBtn">Удалить workspace</button>
+          </div>
+        </div>
+        <p class="muted" id="workspaceDescription">Загружаю информацию о проекте…</p>
+      </section>
+
+      <div class="right-stack">
+        <section class="panel slim" id="connectionPanel">
+          <div class="panel-header">
+            <h2>Подключение</h2>
+            <span id="connectionWorkspaceLabel" class="muted">Загружаю…</span>
+          </div>
+
+          <form id="connectionForm" class="stacked">
+            <label for="connectionBaseUrl">Base URL</label>
+            <input
+              type="text"
+              id="connectionBaseUrl"
+              placeholder="https://api.example.com"
+              required
+            >
+
+            <label for="connectionAuthType">Тип авторизации</label>
+            <select id="connectionAuthType">
+              <option value="1">Basic (логин/пароль)</option>
+              <option value="2">Bearer Token</option>
+              <option value="3">API Key</option>
+            </select>
+
+            <div class="stacked auth-fields">
+              <div class="auth-block auth-basic">
+                <input type="text" id="authUsername" placeholder="Логин (Basic)">
+                <input type="password" id="authPassword" placeholder="Пароль (Basic)">
+              </div>
+              <div class="auth-block auth-bearer">
+                <input type="text" id="authToken" placeholder="Bearer токен">
+              </div>
+              <div class="auth-block auth-apikey">
+                <input type="text" id="authApiKey" placeholder="API Key">
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="submit">Сохранить подключение</button>
+              <button type="button" id="deleteConnection" class="ghost">Удалить подключение</button>
+            </div>
+          </form>
+
+          <div id="connectionStatus" class="muted"></div>
+          <div id="connectionCurrent" class="connection-current muted">Нет сохраненного подключения</div>
+        </section>
+
+        <section class="panel slim" id="membersPanel" style="display:none;">
+          <div class="panel-header">
+            <h2>Участники</h2>
+          </div>
+
+          <div id="membersList" class="members-list"></div>
+
+          <form id="memberForm" class="stacked">
+            <label for="memberUsername">Логин пользователя</label>
+            <input type="text" id="memberUsername" placeholder="username" required>
+
+            <label for="memberAccess">Доступ</label>
+            <select id="memberAccess">
+              <option value="viewer">Viewer</option>
+              <option value="editor">Editor</option>
+              <option value="owner">Owner</option>
+            </select>
+
+            <button type="submit">Добавить/обновить доступ</button>
+            <div id="memberStatus" class="muted"></div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- delete workspace modal -->
+  <div id="deleteModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal">
+      <h3>Удалить workspace?</h3>
+      <p class="muted" id="deleteModalText">Это действие нельзя отменить.</p>
+      <div class="actions">
+        <button type="button" class="ghost" id="deleteModalCancel">Отмена</button>
+        <button type="button" class="danger" id="deleteModalConfirm">Удалить</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="infoModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal">
+      <h3>Внимание</h3>
+      <p class="muted" id="infoModalText"></p>
+      <div class="actions" style="justify-content: flex-end;">
+        <button type="button" id="infoModalClose">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+<div class="sidebar">
+
+<div class="sidebar-logo">
+  <img src="img/istok_light_logo.jpg" alt="Istok">
+</div>
+
+<h2>REST Tester</h2>
+
+<div class="user-chip">
+  <img src="img/icons/user_icon.svg" alt="User" class="sidebar-icon">
+  <span id="sidebarUserName">Пользователь</span>
+</div>
+
+<ul>
+
+<li onclick="openTab('tests')">
+  <img src="img/icons/Logs.svg" alt="Результаты тестов" class="sidebar-icon">
+  <span>Результаты тестов</span>
+</li>
+
+<li onclick="openTab('projects')">
+  <img src="img/icons/Project_ico.svg" alt="Проекты" class="sidebar-icon">
+  <span>Проекты</span>
+</li>
+
+<li onclick="logout()">
+  <img src="img/icons/Exit.svg" alt="Выйти" class="sidebar-icon">
+  <span>Выйти</span>
+</li>
+
+</ul>
+
+<div class="theme-switcher">
+  <label for="themeSelect">Тема</label>
+  <select id="themeSelect">
+    <option value="dark">Тёмная</option>
+    <option value="light">Светлая</option>
+  </select>
+</div>
+
+<button
+  type="button"
+  class="sidebar-toggle"
+  id="sidebarToggle"
+  aria-label="Скрыть или показать меню"
+>
+  <img
+    src="img/icons/ArrowLeftOutline.svg"
+    alt=""
+    id="sidebarToggleIcon"
+    aria-hidden="true"
+  >
+</button>
+
+</div>
+
+
+
+<div class="content">
+
+<div id="tests" class="tab active">
+<h1>Запуск тестов</h1>
+<p>Здесь будет запуск сценариев тестирования REST API.</p>
+</div>
+
+<div id="projects" class="tab">
+<h1>Проекты</h1>
+<div class="projects-layout">
+  <section class="panel">
+    <div class="panel-header">
+      <h2>Рабочие пространства</h2>
+      <span class="muted">Открывайте карточки, чтобы настроить подключение</span>
+    </div>
+    <div class="workspace-section">
+      <h3>Мои проекты</h3>
+      <div id="workspaceListOwn" class="workspace-grid"></div>
+    </div>
+    <div class="workspace-section">
+      <h3>Shared проекты</h3>
+      <div id="workspaceListShared" class="workspace-grid"></div>
+    </div>
+  </section>
+
+  <section class="panel slim" id="workspaceCreate">
+    <div class="panel-header">
+      <h3>Создать рабочее пространство</h3>
+    </div>
+    <form id="workspaceForm" class="stacked">
+      <label for="workspaceName">Название</label>
+      <input
+        type="text"
+        id="workspaceName"
+        placeholder="Например, Core API"
+        required
+      >
+
+      <label for="workspaceDesc">Описание</label>
+      <textarea
+        id="workspaceDesc"
+        rows="2"
+        placeholder="Коротко о проекте (необязательно)"
+      ></textarea>
+
+      <button type="submit">Создать</button>
+    </form>
+  </section>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>

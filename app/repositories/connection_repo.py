@@ -59,7 +59,7 @@ def get_connections_by_workspace(db, id_workspace):
 
         cursor.execute(
             """
-            SELECT id_connection, id_workspace, id_auth_type, base_url
+            SELECT id_connection, id_workspace, id_auth_type, base_url, auth_data
             FROM workspaces_connections
             WHERE id_workspace=%s
             """,
@@ -78,4 +78,13 @@ def delete_connection(db, id_connection):
             (id_connection,)
         )
 
+        db.commit()
+
+
+def delete_connections_by_workspace(db, id_workspace):
+    with db.cursor() as cursor:
+        cursor.execute(
+            "DELETE FROM workspaces_connections WHERE id_workspace=%s",
+            (id_workspace,)
+        )
         db.commit()
