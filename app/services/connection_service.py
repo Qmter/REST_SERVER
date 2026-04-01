@@ -8,8 +8,12 @@ from app.repositories.connection_repo import (
     modify_connection
 )
 
-from app.repositories.workspace_repo import get_workspace_by_id
-
+from app.repositories.workspace_repo import (
+    get_workspace_by_id,
+    get_access_type_by_name,
+    get_workspace_membership,
+    get_workspace_by_id_connection
+)
 
 def create_connection_service(db, id_user, data):
 
@@ -29,8 +33,8 @@ def create_connection_service(db, id_user, data):
     if not workspace:
         raise HTTPException(404, "Workspace not found")
 
-    if workspace["id_user"] != id_user:
-        raise HTTPException(403, "Forbidden")
+    # if workspace["id_user"] != id_user:
+    #     raise HTTPException(403, "Forbidden")
 
     return create_connection(
         db=db,
@@ -57,8 +61,16 @@ def modify_connection_service(db, id_user, data, id_workspace):
     if not workspace:
         raise HTTPException(404, "Workspace not found")
 
-    # if workspace["id_user"]  id_user:
-    #     raise HTTPException(403, "Forbidden")
+    editor_access = get_access_type_by_name(db=db, name_access_type="editor")
+    editor_access_id = editor_access["id_access_type"]
+
+    owner_access = get_access_type_by_name(db=db, name_access_type="owner")
+    owner_access_id = owner_access["id_access_type"]
+
+    membership = get_workspace_membership(db=db, id_workspace=id_workspace, id_user=id_user)
+
+    if not membership or membership["id_access_type"] not in [editor_access_id, owner_access_id]:
+        raise HTTPException(status_code=403, detail="Forbidden")
     
 
     # проверки workspace + user

@@ -198,7 +198,7 @@ margin-top: 10px;
 }
 
 .sidebar-toggle:hover {
-  background: rgba(255,255,255,0.1);
+  background: #1f1f1f;
 }
 
 .sidebar-toggle img {
@@ -292,7 +292,7 @@ font-size: 15px;
 }
 
 .sidebar li:hover {
-background: #334155;
+background: #1f1f1f;
 }
 
 .sidebar-icon {
@@ -623,9 +623,30 @@ button.ghost {
   color: var(--text-base);
 }
 
+/* Workspace create description textarea */
+#workspaceDesc {
+  resize: vertical;
+  min-height: 90px;
+  max-height: 220px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#workspaceForm input,
+#workspaceForm textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#workspaceForm textarea {
+  resize: vertical;
+  max-width: 100%;
+}
+
 button.danger {
-  color: var(--accent-strong);
+  color: #fff;
   border-color: var(--accent-strong);
+  background: linear-gradient(135deg, var(--accent-strong), #e63963);
 }
 
 .actions {
@@ -639,6 +660,15 @@ button.danger {
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 12px;
   margin-top: 8px;
+}
+
+#scenarioList.readonly .scenario-item {
+  cursor: default;
+  opacity: 0.85;
+}
+#scenarioList.readonly .scenario-item:hover {
+  transform: none;
+  border-color: var(--panel-border);
 }
 
 .workspace-section h3 {

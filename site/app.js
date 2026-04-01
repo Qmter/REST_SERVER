@@ -61,6 +61,7 @@ const createPageStatus = document.getElementById("scenarioCreateStatus");
 const jsonEditorEl = document.getElementById("jsonEditor");
 const scenarioList = document.getElementById("scenarioList");
 const createScenarioBtn = document.getElementById("createScenarioBtn");
+const connectionPanel = document.getElementById("connectionPanel");
 
 let currentWorkspaceId = null;
 let currentConnectionId = null;
@@ -339,6 +340,12 @@ async function bootstrapWorkspacePage() {
       if (canCreate) {
         createScenarioBtn.onclick = () => window.location.href = `scenario_create.html?workspace=${id}`;
       }
+    }
+    // UI ограничения для viewer
+    if (currentAccessType === "viewer") {
+      if (deleteWorkspaceBtn) deleteWorkspaceBtn.style.display = "none";
+      if (connectionPanel) connectionPanel.style.display = "none";
+      if (membersPanel) membersPanel.style.display = "none";
     }
 
     await loadConnections(id, ws.name_workspace);
@@ -653,17 +660,50 @@ if (connectionForm) {
 if (deleteConnectionBtn) {
   deleteConnectionBtn.addEventListener("click", async () => {
     if (!currentConnectionId) return;
-    if (!confirm("Удалить подключение?")) return;
+    cacheDeleteModalElements();
+    if (!deleteModal || !deleteModalConfirm || !deleteModalCancel || !deleteModalText) return;
 
-    try {
-      await api(`/connections/${currentConnectionId}`, { method: "DELETE" });
-      currentConnectionId = null;
-      connectionStatus.textContent = "Удалено";
-      if (connectionCurrent) connectionCurrent.textContent = "Нет сохраненного подключения";
-      await loadConnections(currentWorkspaceId, connectionWorkspaceLabel?.textContent);
-    } catch (err) {
-      connectionStatus.textContent = err.message;
-    }
+    deleteModalText.textContent = "Удалить подключение? Это действие нельзя отменить.";
+    deleteModal.dataset.connectionId = currentConnectionId;
+    deleteModal.classList.add("active");
+
+    const closeModal = () => {
+      deleteModal.classList.remove("active");
+      deleteModal.dataset.connectionId = "";
+      deleteModalConfirm.onclick = null;
+      deleteModalCancel.onclick = null;
+    };
+
+    const onCancel = (e) => {
+      e?.preventDefault();
+      closeModal();
+    };
+
+    const onConfirm = async (e) => {
+      e?.preventDefault();
+      const targetId = deleteModal.dataset.connectionId;
+      if (!targetId) return closeModal();
+      deleteModalConfirm.disabled = true;
+      try {
+        await api(`/connections/${targetId}`, { method: "DELETE" });
+        currentConnectionId = null;
+        connectionStatus.textContent = "Удалено";
+        if (connectionCurrent) connectionCurrent.textContent = "Нет сохраненного подключения";
+        await loadConnections(currentWorkspaceId, connectionWorkspaceLabel?.textContent);
+      } catch (err) {
+        connectionStatus.textContent = err.message;
+      } finally {
+        deleteModalConfirm.disabled = false;
+        closeModal();
+      }
+    };
+
+    deleteModalCancel.onclick = onCancel;
+    deleteModalConfirm.onclick = onConfirm;
+
+    deleteModal.addEventListener("click", (e) => {
+      if (e.target === deleteModal) onCancel(e);
+    }, { once: true });
   });
 }
 

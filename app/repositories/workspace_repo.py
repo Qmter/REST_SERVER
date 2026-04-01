@@ -16,6 +16,19 @@ def create_workspace(db, id_user, name_workspace, description, id_access_type):
         row = cursor.fetchone()
     return row["id_workspace"]
 
+def get_workspace_by_id_connection(db, id_connection):
+
+    with db.cursor() as cursor:
+
+        cursor.execute(
+            """
+            SELECT * FROM workspaces_connections WHERE id_connection = %s
+            """,
+            (id_connection,)
+            )
+
+        row = cursor.fetchone()
+    return row["id_workspace"]
 
 
 
