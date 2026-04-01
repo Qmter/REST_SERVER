@@ -50,10 +50,22 @@ const memberUsername = document.getElementById("memberUsername");
 const memberAccess = document.getElementById("memberAccess");
 const memberStatus = document.getElementById("memberStatus");
 const membersPanel = document.getElementById("membersPanel");
+// create page elements
+const createPageForm = document.getElementById("scenarioCreateForm");
+const createPageName = document.getElementById("scenarioCreateName");
+const createPageValidate = document.getElementById("scenarioCreateValidate");
+const createPageSave = document.getElementById("scenarioCreateSave");
+const createPageCancel = document.getElementById("scenarioCreateCancel");
+const createPageFormat = document.getElementById("scenarioCreateFormat");
+const createPageStatus = document.getElementById("scenarioCreateStatus");
+const jsonEditorEl = document.getElementById("jsonEditor");
+const scenarioList = document.getElementById("scenarioList");
+const createScenarioBtn = document.getElementById("createScenarioBtn");
 
 let currentWorkspaceId = null;
 let currentConnectionId = null;
 let currentIsOwner = false;
+let currentAccessType = null;
 
 if (connectionAuthType) {
   connectionAuthType.addEventListener("change", (e) => {
@@ -319,9 +331,18 @@ async function bootstrapWorkspacePage() {
     if (workspaceDescription) workspaceDescription.textContent = ws.description || "Без описания";
     if (connectionWorkspaceLabel) connectionWorkspaceLabel.textContent = ws.name_workspace;
     if (deleteWorkspaceBtn) deleteWorkspaceBtn.dataset.workspaceId = String(id);
-    currentIsOwner = ((ws.name_access_type || "").toLowerCase() === "owner");
+    currentAccessType = (ws.name_access_type || "").toLowerCase();
+    currentIsOwner = (currentAccessType === "owner");
+    if (createScenarioBtn) {
+      const canCreate = currentAccessType !== "viewer";
+      createScenarioBtn.style.display = canCreate ? "inline-flex" : "none";
+      if (canCreate) {
+        createScenarioBtn.onclick = () => window.location.href = `scenario_create.html?workspace=${id}`;
+      }
+    }
 
     await loadConnections(id, ws.name_workspace);
+    await loadScenarios(id);
     if (currentIsOwner) {
       if (membersPanel) membersPanel.style.display = "block";
       await loadMembers(id);
@@ -364,6 +385,35 @@ function updateAuthVisibility(idAuthType) {
     document.querySelectorAll(".auth-bearer").forEach((b) => (b.style.display = "block"));
   } else if (idAuthType === 3) {
     document.querySelectorAll(".auth-apikey").forEach((b) => (b.style.display = "block"));
+  }
+}
+
+async function loadScenarios(workspaceId) {
+  if (!scenarioList) return;
+  scenarioList.innerHTML = "<div class='muted'>Загружаю сценарии...</div>";
+  try {
+    const items = await api(`/scenarios/${workspaceId}`);
+    if (!items.length) {
+      scenarioList.innerHTML = "<div class='muted'>Пока нет сценариев</div>";
+      return;
+    }
+    scenarioList.innerHTML = "";
+    items.forEach((sc) => {
+      const el = document.createElement("div");
+      el.className = "scenario-item";
+      const title = document.createElement("h4");
+      title.textContent = sc.name_scenario || "Без имени";
+      const meta = document.createElement("p");
+      meta.className = "muted";
+      meta.textContent = "Нажмите, чтобы открыть";
+      el.append(title, meta);
+      el.addEventListener("click", () => {
+        window.location.href = `scenario.html?workspace=${workspaceId}&id=${sc.id_scenario}`;
+      });
+      scenarioList.appendChild(el);
+    });
+  } catch (err) {
+    scenarioList.innerHTML = `<div class='muted'>${err.message}</div>`;
   }
 }
 
@@ -662,6 +712,7 @@ const sidebar = document.querySelector(".sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const sidebarToggleIcon = document.getElementById("sidebarToggleIcon");
 
+
 function updateSidebarToggleIcon(isCollapsed) {
   if (!sidebarToggleIcon || !sidebarToggle) return;
   sidebarToggleIcon.src = isCollapsed
@@ -690,6 +741,228 @@ if (sidebar && sidebarToggle) {
   });
 }
 
+function getParams() {
+  const params = new URLSearchParams(window.location.search);
+  return Object.fromEntries(params.entries());
+}
+
+async function bootstrapScenarioPage() {
+  const { workspace, id } = getParams();
+  const workspaceId = Number(workspace);
+  const scenarioId = Number(id);
+  if (!workspaceId || !scenarioId) {
+    showInfoModal("Не переданы параметры сценария");
+    return;
+  }
+
+  const backBtn = document.getElementById("backToWorkspace");
+  if (backBtn) backBtn.addEventListener("click", () => window.location.href = `workspace.html?id=${workspaceId}`);
+
+  const editBtn = document.getElementById("editScenarioBtn");
+  const editPanel = document.getElementById("scenarioEditPanel");
+  const editForm = document.getElementById("scenarioEditForm");
+  const editName = document.getElementById("scenarioEditName");
+  const editJson = document.getElementById("scenarioEditJson");
+  const editStatus = document.getElementById("scenarioEditStatus");
+  const editCancel = document.getElementById("scenarioEditCancel");
+  const scenarioContent = document.getElementById("scenarioContent");
+  const scenarioMeta = document.getElementById("scenarioMeta");
+  let editEditor = null;
+  let canEdit = true;
+
+  const initEditEditor = (content) => {
+    if (!editJson) return null;
+    if (!editEditor) {
+      if (typeof CodeMirror === "undefined") {
+        showInfoModal("Редактор не загрузился");
+        return null;
+      }
+      editEditor = CodeMirror.fromTextArea(editJson, {
+        mode: { name: "javascript", json: true },
+        theme: "material",
+        lineNumbers: true,
+        tabSize: 2,
+        indentUnit: 2,
+        smartIndent: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        viewportMargin: Infinity,
+      });
+      editEditor.setSize("100%", "60vh");
+    }
+    if (typeof content === "string") {
+      editEditor.setValue(content);
+    }
+    return editEditor;
+  };
+
+  try {
+    // определяем права доступа для workspace
+    try {
+      const workspaces = await api("/workspaces");
+      const ws = workspaces.find((w) => w.id_workspace === workspaceId);
+      if (ws && (ws.name_access_type || "").toLowerCase() === "viewer") {
+        canEdit = false;
+        if (editBtn) editBtn.style.display = "none";
+      }
+    } catch (_) {}
+
+    const data = await api(`/scenarios/${workspaceId}/detail/${scenarioId}`);
+    const scenarioTitle = document.getElementById("scenarioTitle");
+    if (scenarioTitle) scenarioTitle.textContent = data.name_scenario || "Без имени";
+    if (scenarioMeta) scenarioMeta.textContent = `Workspace #${workspaceId}`;
+    if (scenarioContent) scenarioContent.textContent = JSON.stringify(data.content_scenario, null, 2);
+
+    if (editBtn && editPanel && editForm && editName && editJson) {
+      if (!canEdit) {
+        editBtn.style.display = "none";
+      } else {
+      editBtn.style.display = "inline-flex";
+      editBtn.onclick = () => {
+        editPanel.style.display = "block";
+        if (scenarioContent) scenarioContent.style.display = "none";
+        if (scenarioMeta) scenarioMeta.style.display = "none";
+        editBtn.style.display = "none";
+        editName.value = data.name_scenario || "";
+        initEditEditor(JSON.stringify(data.content_scenario || {}, null, 2));
+        if (editStatus) editStatus.textContent = "Редактируйте и сохраните";
+      };
+      }
+
+      if (editCancel) {
+        editCancel.onclick = (e) => {
+          e.preventDefault();
+          editPanel.style.display = "none";
+          if (scenarioContent) scenarioContent.style.display = "block";
+          if (scenarioMeta) scenarioMeta.style.display = "block";
+          if (editBtn) editBtn.style.display = "inline-flex";
+        };
+      }
+
+      editForm.onsubmit = async (e) => {
+        e.preventDefault();
+        if (!canEdit) {
+          return showInfoModal("У вас нет прав для изменения сценария");
+        }
+        let content = {};
+        const editorInstance = initEditEditor();
+        try {
+          const raw = editorInstance ? editorInstance.getValue() : (editJson.value || "{}");
+          content = raw ? JSON.parse(raw) : {};
+        } catch (err) {
+          if (editStatus) {
+            editStatus.textContent = "Ошибка: " + err.message;
+            editStatus.classList.add("error");
+          }
+          return;
+        }
+        const name = editName.value.trim();
+        if (editStatus) editStatus.textContent = "Сохраняю...";
+        try {
+          await api(`/scenarios/${workspaceId}/${scenarioId}`, {
+            method: "PATCH",
+            body: JSON.stringify({ name_scenario: name || null, content_scenario: content })
+          });
+          if (editStatus) {
+            editStatus.textContent = "Обновлено";
+            editStatus.classList.remove("error");
+          }
+          if (scenarioContent) scenarioContent.textContent = JSON.stringify(content, null, 2);
+          if (scenarioTitle && name) scenarioTitle.textContent = name;
+          showInfoModal("Сценарий обновлен");
+          editPanel.style.display = "none";
+          if (scenarioContent) scenarioContent.style.display = "block";
+          if (scenarioMeta) scenarioMeta.style.display = "block";
+          if (editBtn) editBtn.style.display = "inline-flex";
+        } catch (err) {
+          if (editStatus) editStatus.textContent = err.message;
+        }
+      };
+    }
+  } catch (err) {
+    showInfoModal(err.message || "Не удалось загрузить сценарий");
+  }
+}
+
+async function bootstrapScenarioCreatePage() {
+  const { workspace } = getParams();
+  const workspaceId = Number(workspace);
+  if (!workspaceId) {
+    showInfoModal("Не передан workspace");
+    return;
+  }
+  if (typeof CodeMirror === "undefined") {
+    showInfoModal("CodeMirror не загрузился");
+    return;
+  }
+  console.log("Init CodeMirror create page");
+
+  const backBtn = document.getElementById("backToWorkspaceFromCreate");
+  if (backBtn) backBtn.onclick = () => window.location.href = `workspace.html?id=${workspaceId}`;
+  if (createPageCancel) createPageCancel.onclick = (e) => { e.preventDefault(); window.location.href = `workspace.html?id=${workspaceId}`; };
+
+  if (!jsonEditorEl) {
+    showInfoModal("Не найден редактор");
+    return;
+  }
+
+  const editor = CodeMirror.fromTextArea(jsonEditorEl, {
+    mode: { name: "javascript", json: true },
+    theme: "material",
+    lineNumbers: true,
+    tabSize: 2,
+    indentUnit: 2,
+    smartIndent: true,
+    matchBrackets: true,
+    autoCloseBrackets: true,
+    viewportMargin: Infinity,
+  });
+
+  editor.setSize("100%", "70vh");
+
+  if (createPageValidate) {
+    createPageValidate.onclick = (e) => {
+      e.preventDefault();
+      try { JSON.parse(editor.getValue()); showInfoModal("JSON валиден"); }
+      catch (err) { showInfoModal("Ошибка: " + err.message); }
+    };
+  }
+
+  if (createPageFormat) {
+    createPageFormat.onclick = (e) => {
+      e.preventDefault();
+      try {
+        const parsed = JSON.parse(editor.getValue());
+        editor.setValue(JSON.stringify(parsed, null, 2));
+      } catch (err) { showInfoModal("Неверный JSON: " + err.message); }
+    };
+  }
+
+  if (createPageForm) {
+    createPageForm.onsubmit = async (e) => {
+      e.preventDefault();
+      if (!createPageName) return;
+      const name = createPageName.value.trim();
+      if (!name) return showInfoModal("Введите название сценария");
+      let content = {};
+      try { content = JSON.parse(editor.getValue() || "{}"); }
+      catch (err) { return showInfoModal("Неверный JSON: " + err.message); }
+      if (createPageSave) createPageSave.disabled = true;
+      try {
+        await api(`/scenarios/${workspaceId}`, {
+          method: "POST",
+          body: JSON.stringify({ name_scenario: name, content_scenario: content })
+        });
+        window.location.href = `workspace.html?id=${workspaceId}`;
+      } catch (err) {
+        showInfoModal(err.message);
+      } finally {
+        if (createPageSave) createPageSave.disabled = false;
+      }
+    };
+  }
+}
+
 const currentPath = window.location.pathname;
 
 if (currentPath.includes("dashboard")) {
@@ -708,5 +981,13 @@ if (currentPath.includes("dashboard")) {
     initDeleteWorkspaceButton();
     initDeleteModal();
     bootstrapWorkspacePage();
+  });
+} else if (currentPath.includes("scenario_create")) {
+  ensureAuth().then((ok)=>{ if(!ok) return; applyTheme(localStorage.getItem("theme")||"dark"); bootstrapScenarioCreatePage(); });
+} else if (currentPath.includes("scenario.html") || currentPath.includes("scenario")) {
+  ensureAuth().then((ok) => {
+    if (!ok) return;
+    applyTheme(localStorage.getItem("theme") || "dark");
+    bootstrapScenarioPage();
   });
 }

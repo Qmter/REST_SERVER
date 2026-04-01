@@ -402,10 +402,19 @@ display: none;
 
 .panel-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 14px;
+}
+
+.panel-header h1,
+.panel-header h2 {
+  margin: 0;
+}
+
+.panel-header > div h2 {
+  margin: 0 0 4px 0;
 }
 
 .tabs {
@@ -441,6 +450,74 @@ display: none;
   grid-template-columns: minmax(0, 1fr) 420px;
   gap: 20px;
   align-items: start;
+}
+.workspace-main { display:flex; flex-direction: column; gap: 20px; max-width: 960px; width: 100%; justify-self: center; }
+
+.scenario-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scenario-item {
+  padding: 12px 14px;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  background: var(--panel-bg);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.scenario-item:hover {
+  border-color: var(--accent);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+.scenario-item h4 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.scenario-item .muted {
+  margin: 0;
+}
+
+.scenario-content {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 14px;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+#scenarioEditJson {
+  min-height: 300px;
+  max-height: 70vh;
+  height: 50vh;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 14px;
+  white-space: pre;
+  tab-size: 2;
+}
+
+#scenarioEditPanel {
+  margin-top: 16px;
+}
+
+.CodeMirror {
+  height: 50vh !important;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #1f1f1f;
+}
+
+.CodeMirror-gutters {
+  background-color: #1f1f1f;
+  border-right: 1px solid var(--panel-border);
 }
 
 .projects-layout {
@@ -847,4 +924,15 @@ body.theme-dark .badge.warning {
     flex: 1 1 calc(50% - 6px);
     justify-content: center;
   }
+}
+
+
+#jsonEditor, .CodeMirror {
+  height: 70vh !important;
+  min-height: 420px;
+  border: 1px solid #1f2a44;
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 14px;
+  background: #1f1f1f;
 }

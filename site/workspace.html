@@ -60,16 +60,31 @@
     </div>
 
     <div class="content workspace-layout">
-      <section class="panel" id="workspaceInfo">
-        <div class="panel-header">
-          <h1 id="workspaceTitle">Workspace</h1>
-          <div class="actions">
-            <button type="button" class="ghost" id="backToProjects">← К проектам</button>
-            <button type="button" class="ghost danger" id="deleteWorkspaceBtn">Удалить workspace</button>
+      <div class="workspace-main">
+        <section class="panel" id="workspaceInfo">
+          <div class="panel-header">
+            <h1 id="workspaceTitle">Workspace</h1>
+            <div class="actions">
+              <button type="button" class="ghost" id="backToProjects">← К проектам</button>
+              <button type="button" class="ghost danger" id="deleteWorkspaceBtn">Удалить workspace</button>
+            </div>
           </div>
-        </div>
-        <p class="muted" id="workspaceDescription">Загружаю информацию о проекте…</p>
-      </section>
+          <p class="muted" id="workspaceDescription">Загружаю информацию о проекте…</p>
+        </section>
+
+        <section class="panel" id="scenariosPanel">
+          <div class="panel-header">
+            <div>
+              <h2>Сценарии</h2>
+              <span class="muted">Выберите сценарий для просмотра</span>
+            </div>
+            <div class="actions">
+              <button type="button" id="createScenarioBtn" style="display:none;">Создать сценарий</button>
+            </div>
+          </div>
+          <div id="scenarioList" class="scenario-list"></div>
+        </section>
+      </div>
 
       <div class="right-stack">
         <section class="panel slim" id="connectionPanel">

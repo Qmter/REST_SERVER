@@ -1,12 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-
 from app.api import users
 from app.api import auth
 from app.api import workspaces
 from app.api import connections
-
+from app.api import scenarios
 
 from app.core.config import settings
 
@@ -20,6 +19,13 @@ app.add_middleware(CORSMiddleware,
                    allow_credentials=True, 
                    allow_methods=["*"], 
                    allow_headers=["*"])
+
+
+app.include_router(
+    scenarios.router,
+    prefix="/scenarios",
+    tags=["scenarios"]
+)
 
 app.include_router(
     users.router,

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Создать сценарий</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="img/istok_light_logo.jpg" alt="Istok"></div>
+      <h2>REST Tester</h2>
+      <div class="user-chip"><img src="img/icons/user_icon.svg" class="sidebar-icon" alt="User"><span id="sidebarUserName">Пользователь</span></div>
+      <ul>
+        <li onclick="window.location.href='dashboard.html#tests'"><img src="img/icons/Logs.svg" class="sidebar-icon" alt="Тесты"><span>Результаты тестов</span></li>
+        <li onclick="window.location.href='dashboard.html#projects'"><img src="img/icons/Project_ico.svg" class="sidebar-icon" alt="Проекты"><span>Проекты</span></li>
+        <li onclick="logout()"><img src="img/icons/Exit.svg" class="sidebar-icon" alt="Выход"><span>Выйти</span></li>
+      </ul>
+      <div class="theme-switcher">
+        <label for="themeSelect">Тема</label>
+        <select id="themeSelect"><option value="dark">Тёмная</option><option value="light">Светлая</option></select>
+      </div>
+      <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Скрыть или показать меню">
+        <img src="img/icons/ArrowLeftOutline.svg" alt="" id="sidebarToggleIcon" aria-hidden="true">
+      </button>
+    </div>
+
+    <div class="content">
+      <section class="panel scenario-editor-panel">
+        <div class="panel-header">
+          <h1>Новый сценарий</h1>
+          <div class="actions">
+            <button type="button" class="ghost" id="backToWorkspaceFromCreate">← К workspace</button>
+            <button type="button" class="ghost danger" id="scenarioCreateCancel">Отмена</button>
+            <button type="button" id="scenarioCreateSave">Создать</button>
+          </div>
+        </div>
+
+        <form class="scenario-editor" id="scenarioCreateForm">
+          <label for="scenarioCreateName">Название</label>
+          <input type="text" id="scenarioCreateName" placeholder="Например, Smoke Test" required>
+
+          <label for="jsonEditor">JSON содержимое</label>
+          <textarea id="jsonEditor" spellcheck="false" wrap="off">{\n  \n}</textarea>
+
+          <div class="json-status-row">
+            <span id="scenarioCreateStatus" class="json-status muted">Введите JSON, проверим на лету</span>
+            <span class="json-shortcuts muted">Ctrl/Cmd+Enter — сохранить</span>
+          </div>
+
+          <div class="actions" style="justify-content: flex-end;">
+            <button type="button" class="ghost" id="scenarioCreateFormat">Форматировать JSON</button>
+            <button type="button" class="ghost" id="scenarioCreateValidate">Проверить валидность</button>
+            <button type="submit" id="scenarioCreateSave">Сохранить</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <div id="infoModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal">
+      <h3>Внимание</h3>
+      <p class="muted" id="infoModalText"></p>
+      <div class="actions" style="justify-content: flex-end;">
+        <button type="button" id="infoModalClose">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5/lib/codemirror.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5/theme/material.css">
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5/lib/codemirror.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5/mode/javascript/javascript.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

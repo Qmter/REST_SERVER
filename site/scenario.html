@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сценарий</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5/lib/codemirror.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5/theme/material.css">
+</head>
+<body>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="img/istok_light_logo.jpg" alt="Istok"></div>
+      <h2>REST Tester</h2>
+      <div class="user-chip"><img src="img/icons/user_icon.svg" class="sidebar-icon" alt="User"><span id="sidebarUserName">Пользователь</span></div>
+      <ul>
+        <li onclick="window.location.href='dashboard.html#tests'"><img src="img/icons/Logs.svg" class="sidebar-icon" alt="Тесты"><span>Результаты тестов</span></li>
+        <li onclick="window.location.href='dashboard.html#projects'"><img src="img/icons/Project_ico.svg" class="sidebar-icon" alt="Проекты"><span>Проекты</span></li>
+        <li onclick="logout()"><img src="img/icons/Exit.svg" class="sidebar-icon" alt="Выход"><span>Выйти</span></li>
+      </ul>
+      <div class="theme-switcher">
+        <label for="themeSelect">Тема</label>
+        <select id="themeSelect"><option value="dark">Тёмная</option><option value="light">Светлая</option></select>
+      </div>
+      <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Скрыть или показать меню">
+        <img src="img/icons/ArrowLeftOutline.svg" alt="" id="sidebarToggleIcon" aria-hidden="true">
+      </button>
+    </div>
+
+    <div class="content">
+      <section class="panel">
+        <div class="panel-header">
+          <h1 id="scenarioTitle">Сценарий</h1>
+          <div class="actions">
+            <button type="button" class="ghost" id="backToWorkspace">← К workspace</button>
+            <button type="button" id="editScenarioBtn">Редактировать</button>
+          </div>
+        </div>
+        <p class="muted" id="scenarioMeta"></p>
+        <pre id="scenarioContent" class="scenario-content">Загружаю...</pre>
+      </section>
+
+      <section class="panel" id="scenarioEditPanel" style="display:none;">
+        <div class="panel-header">
+          <h2>Редактировать сценарий</h2>
+        </div>
+        <form class="scenario-editor" id="scenarioEditForm">
+          <label for="scenarioEditName">Название</label>
+          <input type="text" id="scenarioEditName" required>
+
+          <label for="scenarioEditJson">JSON содержимое</label>
+          <textarea id="scenarioEditJson" spellcheck="false" wrap="off" placeholder="{ }"></textarea>
+
+          <div class="json-status-row">
+            <span id="scenarioEditStatus" class="json-status muted">Измените и сохраните</span>
+          </div>
+
+          <div class="actions" style="justify-content: flex-end;">
+            <button type="button" class="ghost" id="scenarioEditCancel">Отмена</button>
+            <button type="submit" id="scenarioEditSave">Сохранить</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+  <div id="infoModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal">
+      <h3>Внимание</h3>
+      <p class="muted" id="infoModalText"></p>
+      <div class="actions" style="justify-content: flex-end;">
+        <button type="button" id="infoModalClose">Закрыть</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5/lib/codemirror.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5/mode/javascript/javascript.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
