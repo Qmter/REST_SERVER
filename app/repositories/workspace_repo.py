@@ -127,6 +127,17 @@ def delete_workspace_users(db, id_workspace: int):
         )
         db.commit()
 
+def delete_workspace_member(db, id_workspace: int, id_user: int):
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            DELETE FROM workspace_users
+            WHERE id_workspace = %s AND id_user = %s
+            """,
+            (id_workspace, id_user)
+        )
+        db.commit()
+
 
 def list_workspace_members(db, id_workspace: int):
     with db.cursor() as cursor:

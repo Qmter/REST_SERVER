@@ -10,7 +10,8 @@ from app.services.workspace_service import (
     list_workspaces_service,
     delete_workspace_service,
     list_workspace_members_service,
-    add_workspace_member_service
+    add_workspace_member_service,
+    delete_workspace_member_service
 )
 
 from app.core.dependencies import get_current_user
@@ -93,4 +94,20 @@ def add_member(
         id_user_actor=user["id_user"],
         username=username,
         access_name=access_name
+    )
+
+
+@router.delete("/{id_workspace}/members/{id_user}", description="Remove member from workspace (owner only)")
+def delete_member(
+    id_workspace: int,
+    id_user: int,
+    user = Depends(get_current_user),
+    db = Depends(get_db),
+    access=Depends(check_workspace_access_dep("delete"))  # owner only
+):
+    return delete_workspace_member_service(
+        db=db,
+        id_workspace=id_workspace,
+        id_user_actor=user["id_user"],
+        id_user_target=id_user
     )

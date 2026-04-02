@@ -453,6 +453,58 @@ async function loadMembers(workspaceId) {
       access.className = "access";
       access.textContent = m.name_access_type;
       item.append(name, access);
+
+      if (currentIsOwner && m.name_access_type !== "owner") {
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "ghost danger";
+        delBtn.textContent = "Удалить";
+        delBtn.onclick = () => {
+          cacheDeleteModalElements();
+          if (!deleteModal || !deleteModalConfirm || !deleteModalCancel || !deleteModalText) return;
+          deleteModalText.textContent = `Удалить участника "${m.username}"?`;
+          deleteModal.dataset.memberId = m.id_user;
+          deleteModal.dataset.action = "delete-member";
+          deleteModal.classList.add("active");
+
+          const closeModal = () => {
+            deleteModal.classList.remove("active");
+            deleteModal.dataset.memberId = "";
+            deleteModal.dataset.action = "";
+            deleteModalConfirm.onclick = null;
+            deleteModalCancel.onclick = null;
+          };
+
+          const onCancel = (e) => {
+            e?.preventDefault();
+            closeModal();
+          };
+
+          const onConfirm = async (e) => {
+            e?.preventDefault();
+            const targetId = deleteModal.dataset.memberId;
+            if (!targetId) return closeModal();
+            deleteModalConfirm.disabled = true;
+            try {
+              await api(`/workspaces/${currentWorkspaceId}/members/${targetId}`, { method: "DELETE" });
+              if (memberStatus) memberStatus.textContent = "Участник удален";
+              await loadMembers(currentWorkspaceId);
+            } catch (err) {
+              if (memberStatus) memberStatus.textContent = err.message;
+            } finally {
+              deleteModalConfirm.disabled = false;
+              closeModal();
+            }
+          };
+
+          deleteModalCancel.onclick = onCancel;
+          deleteModalConfirm.onclick = onConfirm;
+          deleteModal.addEventListener("click", (e) => { if (e.target === deleteModal) onCancel(e); }, { once: true });
+        };
+
+        item.append(delBtn);
+      }
+
       membersList.appendChild(item);
     });
   } catch (err) {
