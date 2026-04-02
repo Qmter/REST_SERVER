@@ -89,6 +89,14 @@ def add_workspace_member_service(db, id_workspace, id_user_actor, username, acce
     if not access:
         raise HTTPException(status_code=400, detail="Invalid access type")
 
+    # запрет понижения владельца (включая себя)
+    target_membership = get_workspace_membership(db=db, id_workspace=id_workspace, id_user=target_user["id_user"])
+    if target_membership and target_membership["id_access_type"] == owner_access and access_name != "owner":
+        raise HTTPException(status_code=400, detail="Нельзя понизить владельца")
+
+    if target_user["id_user"] == id_user_actor and access_name != "owner":
+        raise HTTPException(status_code=400, detail="Нельзя понизить собственные права владельца")
+
     add_workspace_member(
         db=db,
         id_workspace=id_workspace,

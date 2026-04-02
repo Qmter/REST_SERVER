@@ -78,7 +78,16 @@
               <h2>Сценарии</h2>
               <span class="muted">Выберите сценарий для просмотра</span>
             </div>
-            <div class="actions">
+            <div class="scenario-controls">
+              <div class="scenario-controls-left">
+                <input type="text" id="scenarioSearch" placeholder="Поиск..." aria-label="Поиск сценариев">
+                <select id="scenarioSort" aria-label="Сортировка">
+                  <option value="name-asc">По имени A→Я</option>
+                  <option value="name-desc">По имени Я→A</option>
+                  <option value="id-desc">Новые сверху</option>
+                  <option value="id-asc">Старые сверху</option>
+                </select>
+              </div>
               <button type="button" id="createScenarioBtn" style="display:none;">Создать сценарий</button>
             </div>
           </div>

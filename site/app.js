@@ -62,11 +62,14 @@ const jsonEditorEl = document.getElementById("jsonEditor");
 const scenarioList = document.getElementById("scenarioList");
 const createScenarioBtn = document.getElementById("createScenarioBtn");
 const connectionPanel = document.getElementById("connectionPanel");
+const scenarioSearch = document.getElementById("scenarioSearch");
+const scenarioSort = document.getElementById("scenarioSort");
 
 let currentWorkspaceId = null;
 let currentConnectionId = null;
 let currentIsOwner = false;
 let currentAccessType = null;
+let scenarioCache = [];
 
 if (connectionAuthType) {
   connectionAuthType.addEventListener("change", (e) => {
@@ -193,7 +196,7 @@ function renderWorkspaceItem(workspace) {
   top.append(title);
 
   const descr = document.createElement("p");
-  descr.className = "muted";
+  descr.className = "muted description";
   descr.textContent = workspace.description || "Без описания";
 
   if (workspace.name_access_type && workspace.name_access_type !== "owner") {
@@ -274,7 +277,7 @@ if (workspaceForm) {
       if (workspaceDescInput) workspaceDescInput.value = "";
       await loadWorkspaces();
     } catch (err) {
-      if (connectionStatus) connectionStatus.textContent = err.message;
+      showInfoModal(err.message || "Не удалось создать workspace");
     }
   });
 }
@@ -362,6 +365,14 @@ async function bootstrapWorkspacePage() {
   }
 }
 
+if (scenarioSearch) {
+  scenarioSearch.addEventListener("input", () => renderScenarios());
+}
+
+if (scenarioSort) {
+  scenarioSort.addEventListener("change", () => renderScenarios());
+}
+
 function buildAuthData(idAuthType) {
   const payload = {};
 
@@ -399,29 +410,58 @@ async function loadScenarios(workspaceId) {
   if (!scenarioList) return;
   scenarioList.innerHTML = "<div class='muted'>Загружаю сценарии...</div>";
   try {
-    const items = await api(`/scenarios/${workspaceId}`);
-    if (!items.length) {
-      scenarioList.innerHTML = "<div class='muted'>Пока нет сценариев</div>";
-      return;
-    }
-    scenarioList.innerHTML = "";
-    items.forEach((sc) => {
-      const el = document.createElement("div");
-      el.className = "scenario-item";
-      const title = document.createElement("h4");
-      title.textContent = sc.name_scenario || "Без имени";
-      const meta = document.createElement("p");
-      meta.className = "muted";
-      meta.textContent = "Нажмите, чтобы открыть";
-      el.append(title, meta);
-      el.addEventListener("click", () => {
-        window.location.href = `scenario.html?workspace=${workspaceId}&id=${sc.id_scenario}`;
-      });
-      scenarioList.appendChild(el);
-    });
+    scenarioCache = await api(`/scenarios/${workspaceId}`);
+    renderScenarios();
   } catch (err) {
     scenarioList.innerHTML = `<div class='muted'>${err.message}</div>`;
   }
+}
+
+function renderScenarios() {
+  if (!scenarioList) return;
+  const term = (scenarioSearch?.value || "").trim().toLowerCase();
+  const sort = scenarioSort?.value || "name-asc";
+
+  let items = [...scenarioCache];
+
+  if (term) {
+    items = items.filter((sc) => (sc.name_scenario || "").toLowerCase().includes(term));
+  }
+
+  items.sort((a, b) => {
+    switch (sort) {
+      case "name-desc":
+        return (b.name_scenario || "").localeCompare(a.name_scenario || "");
+      case "id-desc":
+        return (b.id_scenario || 0) - (a.id_scenario || 0);
+      case "id-asc":
+        return (a.id_scenario || 0) - (b.id_scenario || 0);
+      case "name-asc":
+      default:
+        return (a.name_scenario || "").localeCompare(b.name_scenario || "");
+    }
+  });
+
+  if (!items.length) {
+    scenarioList.innerHTML = "<div class='muted'>Пока нет сценариев</div>";
+    return;
+  }
+
+  scenarioList.innerHTML = "";
+  items.forEach((sc) => {
+    const el = document.createElement("div");
+    el.className = "scenario-item";
+    const title = document.createElement("h4");
+    title.textContent = sc.name_scenario || "Без имени";
+    const meta = document.createElement("p");
+    meta.className = "muted";
+    meta.textContent = "Нажмите, чтобы открыть";
+    el.append(title, meta);
+    el.addEventListener("click", () => {
+      window.location.href = `scenario.html?workspace=${currentWorkspaceId}&id=${sc.id_scenario}`;
+    });
+    scenarioList.appendChild(el);
+  });
 }
 
 async function deleteWorkspaceApi(id) {
