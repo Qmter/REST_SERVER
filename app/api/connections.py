@@ -3,14 +3,18 @@ from fastapi import APIRouter, Depends
 from app.schemas.connection_schema import (
     ConnectionCreate,
     ConnectionResponse,
-    ConnectionModify
+    ConnectionModify,
+    OpenAPISchema
 )
 
 from app.services.connection_service import (
     create_connection_service,
     list_connections_service,
     delete_connection_service,
-    modify_connection_service
+    modify_connection_service,
+    get_openapi_service,
+    delete_openapi_service,
+    update_openapi_service
 )
 
 from app.core.dependencies import get_current_user
@@ -62,3 +66,30 @@ def delete_connection(
     delete_connection_service(db, user["id_user"], id_connection)
 
     return {"status": "deleted"}
+
+@router.put("/openapi/{id_workspace}")
+def update_openapi(
+    id_workspace: int,
+    data: OpenAPISchema,
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("write"))
+):
+    return update_openapi_service(db, id_workspace, data)
+
+
+@router.get("/openapi/{id_workspace}")
+def get_openapi(
+    id_workspace: int,
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("read"))
+):
+    return get_openapi_service(db, id_workspace)
+
+
+@router.delete("/openapi/{id_workspace}")
+def delete_openapi(
+    id_workspace: int,
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("delete"))
+):
+    return delete_openapi_service(db, id_workspace)

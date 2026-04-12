@@ -6,6 +6,7 @@ from app.api import auth
 from app.api import workspaces
 from app.api import connections
 from app.api import scenarios
+from app.api import tests
 
 from app.core.config import settings
 
@@ -20,6 +21,13 @@ app.add_middleware(CORSMiddleware,
                    allow_methods=["*"], 
                    allow_headers=["*"])
 
+
+
+app.include_router(
+    tests.router,
+    prefix="/tests",
+    tags=["tests"]
+)
 
 app.include_router(
     scenarios.router,

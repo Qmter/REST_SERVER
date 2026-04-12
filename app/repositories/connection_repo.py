@@ -88,3 +88,42 @@ def delete_connections_by_workspace(db, id_workspace):
             (id_workspace,)
         )
         db.commit()
+
+
+def update_openapi(db, id_workspace, schema_json):
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            UPDATE workspaces_connections
+            SET openapi_schema = %s
+            WHERE id_workspace = %s
+            """,
+            (schema_json, id_workspace)
+        )
+        db.commit()
+
+
+def get_openapi(db, id_workspace):
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT openapi_schema
+            FROM workspaces_connections
+            WHERE id_workspace = %s
+            """,
+            (id_workspace,)
+        )
+        return cursor.fetchone()
+
+
+def delete_openapi(db, id_workspace):
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            UPDATE workspaces_connections
+            SET openapi_schema = NULL
+            WHERE id_workspace = %s
+            """,
+            (id_workspace,)
+        )
+        db.commit()

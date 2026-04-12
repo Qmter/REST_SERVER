@@ -64,12 +64,26 @@ const createScenarioBtn = document.getElementById("createScenarioBtn");
 const connectionPanel = document.getElementById("connectionPanel");
 const scenarioSearch = document.getElementById("scenarioSearch");
 const scenarioSort = document.getElementById("scenarioSort");
+const testList = document.getElementById("testList");
+const testSearch = document.getElementById("testSearch");
+const testSort = document.getElementById("testSort");
+const generateTestsBtn = document.getElementById("generateTestsBtn");
+const testTitle = document.getElementById("testTitle");
+const testMeta = document.getElementById("testMeta");
+const testContent = document.getElementById("testContent");
+const backToWorkspaceFromTest = document.getElementById("backToWorkspaceFromTest");
+const openapiFile = document.getElementById("openapiFile");
+const chooseOpenapiBtn = document.getElementById("chooseOpenapiBtn");
+const uploadOpenapiBtn = document.getElementById("uploadOpenapiBtn");
+const deleteOpenapiBtn = document.getElementById("deleteOpenapiBtn");
+const openapiStatus = document.getElementById("openapiStatus");
 
 let currentWorkspaceId = null;
 let currentConnectionId = null;
 let currentIsOwner = false;
 let currentAccessType = null;
 let scenarioCache = [];
+let testsCache = [];
 
 if (connectionAuthType) {
   connectionAuthType.addEventListener("change", (e) => {
@@ -353,6 +367,7 @@ async function bootstrapWorkspacePage() {
 
     await loadConnections(id, ws.name_workspace);
     await loadScenarios(id);
+    await loadTests(id);
     if (currentIsOwner) {
       if (membersPanel) membersPanel.style.display = "block";
       await loadMembers(id);
@@ -371,6 +386,14 @@ if (scenarioSearch) {
 
 if (scenarioSort) {
   scenarioSort.addEventListener("change", () => renderScenarios());
+}
+
+if (testSearch) {
+  testSearch.addEventListener("input", () => renderTests());
+}
+
+if (testSort) {
+  testSort.addEventListener("change", () => renderTests());
 }
 
 function buildAuthData(idAuthType) {
@@ -457,11 +480,132 @@ function renderScenarios() {
     meta.className = "muted";
     meta.textContent = "Нажмите, чтобы открыть";
     el.append(title, meta);
+
+    const actions = document.createElement("div");
+    actions.className = "scenario-actions-inline";
+
+    const openBtn = document.createElement("button");
+    openBtn.type = "button";
+    openBtn.className = "ghost";
+    openBtn.textContent = "Открыть";
+    openBtn.onclick = () => window.location.href = `./scenario.html?workspace=${currentWorkspaceId}&id=${sc.id_scenario}`;
+
+    const genBtn = document.createElement("button");
+    genBtn.type = "button";
+    genBtn.className = "ghost";
+    genBtn.textContent = "Сгенерировать тест";
+    genBtn.onclick = async (e) => {
+      e.stopPropagation();
+      if (!currentWorkspaceId) return;
+      genBtn.disabled = true;
+      genBtn.textContent = "Генерирую...";
+      try {
+        await api(`/tests/generate/${currentWorkspaceId}/${sc.id_scenario}`, { method: "POST" });
+        await loadTests(currentWorkspaceId);
+        showInfoModal("Тест сгенерирован");
+      } catch (err) {
+        showInfoModal(err.message || "Не удалось сгенерировать тест");
+      } finally {
+        genBtn.disabled = false;
+        genBtn.textContent = "Сгенерировать тест";
+      }
+    };
+
+    actions.append(openBtn, genBtn);
+    el.append(actions);
+
     el.addEventListener("click", () => {
       window.location.href = `scenario.html?workspace=${currentWorkspaceId}&id=${sc.id_scenario}`;
     });
     scenarioList.appendChild(el);
   });
+}
+
+async function loadTests(workspaceId) {
+  if (!testList) return;
+  testList.innerHTML = "<div class='muted'>Загружаю тесты...</div>";
+  try {
+    testsCache = await api(`/tests/${workspaceId}`);
+    renderTests();
+  } catch (err) {
+    testList.innerHTML = `<div class='muted'>${err.message}</div>`;
+  }
+}
+
+function renderTests() {
+  if (!testList) return;
+  const term = (testSearch?.value || "").trim().toLowerCase();
+  const sort = testSort?.value || "name-asc";
+
+  let items = [...testsCache];
+
+  if (term) {
+    items = items.filter((t) => (t.name_test || "").toLowerCase().includes(term));
+  }
+
+  items.sort((a, b) => {
+    switch (sort) {
+      case "name-desc":
+        return (b.name_test || "").localeCompare(a.name_test || "");
+      case "id-desc":
+        return (b.id_test || 0) - (a.id_test || 0);
+      case "id-asc":
+        return (a.id_test || 0) - (b.id_test || 0);
+      case "name-asc":
+      default:
+        return (a.name_test || "").localeCompare(b.name_test || "");
+    }
+  });
+
+  if (!items.length) {
+    testList.innerHTML = "<div class='muted'>Пока нет тестов</div>";
+    return;
+  }
+
+  testList.innerHTML = "";
+  items.forEach((t) => {
+    const el = document.createElement("div");
+    el.className = "scenario-item";
+    const title = document.createElement("h4");
+    title.textContent = t.name_test || `Тест #${t.id_test}`;
+    const meta = document.createElement("p");
+    meta.className = "muted";
+    meta.textContent = `ID: ${t.id_test || "—"}`;
+    el.append(title, meta);
+
+    const actions = document.createElement("div");
+    actions.className = "scenario-actions-inline";
+    const openBtn = document.createElement("button");
+    openBtn.type = "button";
+    openBtn.className = "ghost";
+    openBtn.textContent = "Открыть";
+    openBtn.onclick = () => window.location.href = `./test.html?workspace=${currentWorkspaceId}&id=${t.id_test}`;
+    actions.append(openBtn);
+    el.append(actions);
+
+    testList.appendChild(el);
+  });
+}
+
+async function bootstrapTestPage() {
+  const params = new URLSearchParams(window.location.search);
+  const workspaceId = Number(params.get("workspace"));
+  const testId = Number(params.get("id"));
+  if (!workspaceId || !testId) {
+    showInfoModal("Не переданы параметры теста");
+    return;
+  }
+  if (backToWorkspaceFromTest) {
+    backToWorkspaceFromTest.onclick = () => window.location.href = `workspace.html?id=${workspaceId}`;
+  }
+  try {
+    const data = await api(`/tests/${workspaceId}/detail/${testId}`);
+    if (testTitle) testTitle.textContent = data.name_test || `Тест #${data.id_test}`;
+    if (testMeta) testMeta.textContent = `ID: ${data.id_test} · Сценарий: ${data.id_scenario} · Сгенерирован: ${data.generated_at || "—"}`;
+    if (testContent) testContent.textContent = JSON.stringify(data.content_test || {}, null, 2);
+  } catch (err) {
+    showInfoModal(err.message || "Не удалось загрузить тест");
+  }
 }
 
 async function deleteWorkspaceApi(id) {
@@ -704,6 +848,8 @@ async function loadConnections(workspaceId, workspaceName) {
     }
 
     connectionStatus.textContent = "Подключение сохранено и относится только к выбранному workspace";
+    // подгружаем openapi
+    await loadOpenapi(workspaceId);
   } catch (err) {
     connectionStatus.textContent = err.message;
   }
@@ -796,6 +942,74 @@ if (deleteConnectionBtn) {
     deleteModal.addEventListener("click", (e) => {
       if (e.target === deleteModal) onCancel(e);
     }, { once: true });
+  });
+}
+
+async function loadOpenapi(workspaceId) {
+  if (!openapiStatus) return;
+  try {
+    const openapi_schema = await api(`/connections/openapi/${workspaceId}`);
+    openapiStatus.textContent = "Схема загружена";
+  } catch (err) {
+    openapiStatus.textContent = "Схема не загружена";
+  }
+}
+
+let openapiFileContent = null;
+
+if (chooseOpenapiBtn && openapiFile) {
+  chooseOpenapiBtn.addEventListener("click", () => openapiFile.click());
+  openapiFile.addEventListener("change", () => {
+    const file = openapiFile.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        openapiFileContent = JSON.parse(reader.result);
+        openapiStatus.textContent = `Файл загружен: ${file.name}`;
+      } catch (e) {
+        openapiStatus.textContent = "Некорректный JSON в файле";
+        openapiFileContent = null;
+      }
+    };
+    reader.readAsText(file);
+  });
+}
+
+if (uploadOpenapiBtn) {
+  uploadOpenapiBtn.addEventListener("click", async () => {
+    if (!currentWorkspaceId) return showInfoModal("Сначала выберите workspace");
+    if (!openapiFileContent) return showInfoModal("Сначала выберите JSON-файл OpenAPI");
+    uploadOpenapiBtn.disabled = true;
+    try {
+      await api(`/connections/openapi/${currentWorkspaceId}`, {
+        method: "PUT",
+        body: JSON.stringify({ openapi_schema: openapiFileContent })
+      });
+      openapiStatus.textContent = "Сохранено";
+      showInfoModal("OpenAPI сохранён");
+    } catch (err) {
+      showInfoModal(err.message || "Не удалось сохранить OpenAPI");
+    } finally {
+      uploadOpenapiBtn.disabled = false;
+    }
+  });
+}
+
+if (deleteOpenapiBtn) {
+  deleteOpenapiBtn.addEventListener("click", async () => {
+    if (!currentWorkspaceId) return;
+    deleteOpenapiBtn.disabled = true;
+    try {
+      await api(`/connections/openapi/${currentWorkspaceId}`, { method: "DELETE" });
+      openapiStatus.textContent = "Схема удалена";
+      openapiFileContent = null;
+      if (openapiFile) openapiFile.value = "";
+    } catch (err) {
+      showInfoModal(err.message || "Не удалось удалить OpenAPI");
+    } finally {
+      deleteOpenapiBtn.disabled = false;
+    }
   });
 }
 
@@ -1121,5 +1335,11 @@ if (currentPath.includes("dashboard")) {
     if (!ok) return;
     applyTheme(localStorage.getItem("theme") || "dark");
     bootstrapScenarioPage();
+  });
+} else if (currentPath.includes("test.html") || currentPath.includes("test")) {
+  ensureAuth().then((ok) => {
+    if (!ok) return;
+    applyTheme(localStorage.getItem("theme") || "dark");
+    bootstrapTestPage();
   });
 }

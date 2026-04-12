@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тест</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-logo"><img src="img/istok_light_logo.jpg" alt="Istok" /></div>
+      <h2>REST Tester</h2>
+      <div class="user-chip"><img src="img/icons/user_icon.svg" class="sidebar-icon" alt="User" /><span id="sidebarUserName">Пользователь</span></div>
+      <ul>
+        <li onclick="window.location.href='dashboard.html#tests'"><img src="img/icons/Logs.svg" class="sidebar-icon" alt="Тесты" /><span>Результаты тестов</span></li>
+        <li onclick="window.location.href='dashboard.html#projects'"><img src="img/icons/Project_ico.svg" class="sidebar-icon" alt="Проекты" /><span>Проекты</span></li>
+        <li onclick="logout()"><img src="img/icons/Exit.svg" class="sidebar-icon" alt="Выход" /><span>Выйти</span></li>
+      </ul>
+      <div class="theme-switcher">
+        <label for="themeSelect">Тема</label>
+        <select id="themeSelect"><option value="dark">Тёмная</option><option value="light">Светлая</option></select>
+      </div>
+      <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Скрыть или показать меню">
+        <img src="img/icons/ArrowLeftOutline.svg" alt="" id="sidebarToggleIcon" aria-hidden="true" />
+      </button>
+    </div>
+
+    <div class="content">
+      <section class="panel">
+        <div class="panel-header">
+          <h1 id="testTitle">Тест</h1>
+          <div class="actions">
+            <button type="button" class="ghost" id="backToWorkspaceFromTest">← К workspace</button>
+          </div>
+        </div>
+        <p class="muted" id="testMeta"></p>
+        <pre id="testContent" class="scenario-content">Загружаю...</pre>
+      </section>
+    </div>
+  </div>
+
+  <div id="infoModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal">
+      <h3>Внимание</h3>
+      <p class="muted" id="infoModalText"></p>
+      <div class="actions" style="justify-content: flex-end;">
+        <button type="button" id="infoModalClose">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

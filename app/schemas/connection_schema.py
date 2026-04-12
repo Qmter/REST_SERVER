@@ -47,3 +47,7 @@ class ConnectionResponse(BaseModel):
     id_auth_type: int
     base_url: str | None = None
     auth_data: dict | None = None
+
+
+class OpenAPISchema(BaseModel):
+    openapi_schema: dict

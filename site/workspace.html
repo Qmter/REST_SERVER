@@ -72,27 +72,51 @@
           <p class="muted" id="workspaceDescription">Загружаю информацию о проекте…</p>
         </section>
 
-        <section class="panel" id="scenariosPanel">
-          <div class="panel-header">
-            <div>
-              <h2>Сценарии</h2>
-              <span class="muted">Выберите сценарий для просмотра</span>
-            </div>
-            <div class="scenario-controls">
-              <div class="scenario-controls-left">
-                <input type="text" id="scenarioSearch" placeholder="Поиск..." aria-label="Поиск сценариев">
-                <select id="scenarioSort" aria-label="Сортировка">
-                  <option value="name-asc">По имени A→Я</option>
-                  <option value="name-desc">По имени Я→A</option>
-                  <option value="id-desc">Новые сверху</option>
-                  <option value="id-asc">Старые сверху</option>
-                </select>
+        <div class="workspace-boards">
+          <section class="panel" id="testsPanel">
+            <div class="panel-header">
+              <div>
+                <h2>Тесты</h2>
+                <span class="muted">Генерируются из сценариев</span>
               </div>
-              <button type="button" id="createScenarioBtn" style="display:none;">Создать сценарий</button>
+              <div class="scenario-controls">
+                <div class="scenario-controls-left">
+                  <input type="text" id="testSearch" placeholder="Поиск..." aria-label="Поиск тестов">
+                  <select id="testSort" aria-label="Сортировка тестов">
+                    <option value="name-asc">По имени A→Я</option>
+                    <option value="name-desc">По имени Я→A</option>
+                    <option value="id-desc">Новые сверху</option>
+                    <option value="id-asc">Старые сверху</option>
+                  </select>
+                </div>
+                <button type="button" id="generateTestsBtn" style="display:none;">Сгенерировать все</button>
+              </div>
             </div>
-          </div>
-          <div id="scenarioList" class="scenario-list"></div>
-        </section>
+            <div id="testList" class="scenario-list"></div>
+          </section>
+
+          <section class="panel" id="scenariosPanel">
+            <div class="panel-header">
+              <div>
+                <h2>Сценарии</h2>
+                <span class="muted">Выберите сценарий для просмотра</span>
+              </div>
+              <div class="scenario-controls">
+                <div class="scenario-controls-left">
+                  <input type="text" id="scenarioSearch" placeholder="Поиск..." aria-label="Поиск сценариев">
+                  <select id="scenarioSort" aria-label="Сортировка">
+                    <option value="name-asc">По имени A→Я</option>
+                    <option value="name-desc">По имени Я→A</option>
+                    <option value="id-desc">Новые сверху</option>
+                    <option value="id-asc">Старые сверху</option>
+                  </select>
+                </div>
+                <button type="button" id="createScenarioBtn" style="display:none;">Создать сценарий</button>
+              </div>
+            </div>
+            <div id="scenarioList" class="scenario-list"></div>
+          </section>
+        </div>
       </div>
 
       <div class="right-stack">
@@ -139,6 +163,17 @@
 
           <div id="connectionStatus" class="muted"></div>
           <div id="connectionCurrent" class="connection-current muted">Нет сохраненного подключения</div>
+
+          <div class="stacked" id="openapiBlock">
+            <h3 style="margin:8px 0 4px;">OpenAPI схема</h3>
+            <div class="actions">
+              <input type="file" id="openapiFile" accept=".json,application/json" style="display:none;">
+              <button type="button" id="chooseOpenapiBtn" class="ghost">Загрузить файл</button>
+              <button type="button" id="uploadOpenapiBtn" class="ghost">Сохранить схему</button>
+              <button type="button" id="deleteOpenapiBtn" class="ghost danger">Удалить схему</button>
+            </div>
+            <div id="openapiStatus" class="muted"></div>
+          </div>
         </section>
 
         <section class="panel slim" id="membersPanel" style="display:none;">

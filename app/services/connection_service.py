@@ -5,7 +5,10 @@ from app.repositories.connection_repo import (
     create_connection,
     get_connections_by_workspace,
     delete_connection,
-    modify_connection
+    modify_connection,
+    update_openapi,
+    get_openapi,
+    delete_openapi
 )
 
 from app.repositories.workspace_repo import (
@@ -111,3 +114,34 @@ def delete_connection_service(db, id_user, id_connection):
 
     # можно улучшить позже (join + проверка)
     delete_connection(db=db, id_connection=id_connection)
+
+
+def update_openapi_service(db, id_workspace, data):
+
+    schema_json = json.dumps(data.openapi_schema)
+
+    update_openapi(db, id_workspace, schema_json)
+
+    return {"status": "updated"}
+
+
+def get_openapi_service(db, id_workspace):
+
+    row = get_openapi(db, id_workspace)
+
+    if not row or not row["openapi_schema"]:
+        raise HTTPException(404, "OpenAPI not found")
+
+    schema = row["openapi_schema"]
+
+    if isinstance(schema, str):
+        schema = json.loads(schema)
+
+    return schema
+
+
+def delete_openapi_service(db, id_workspace):
+
+    delete_openapi(db, id_workspace)
+
+    return {"status": "deleted"}
