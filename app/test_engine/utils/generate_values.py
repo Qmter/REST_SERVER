@@ -1,6 +1,7 @@
 import rstr
 import random
 import logging
+from fastapi import HTTPException
 from jsonpath_ng import parse
 
 # Список интерфейсов которые нельзя использовать
@@ -31,6 +32,8 @@ class GenerateValues:
 
         # Сохраняет паттерны
         GenerateValues.arguments_pattern = arguments_patterns
+
+        errors = []  # Сбор ошибок для возврата 422 вместо тихого пропуска
 
         # Собираем все шаги с endpoint/parameters вручную, чтобы избежать
         # странных строковых представлений путей из jsonpath_ng
@@ -65,7 +68,8 @@ class GenerateValues:
                         fields=obj['parameters'],
                         path_parts=path_parts,
                         field_type="parameters",
-                        endpoint=endpoint_key
+                        endpoint=endpoint_key,
+                        errors=errors
                     )
 
                 # Если есть validation — обрабатываем
@@ -75,18 +79,23 @@ class GenerateValues:
                         fields=obj['validation'],
                         path_parts=path_parts,
                         field_type="validation",
-                        endpoint=endpoint_key
+                        endpoint=endpoint_key,
+                        errors=errors
                     )
 
             except Exception as e:
-                print(f"Ошибка при обработке шага сценария: {e}")
+                errors.append(f"{endpoint_key}: {e}")
                 continue
+
+        if errors:
+            # Возвращаем первую пачку ошибок, чтобы не захламлять ответ
+            raise HTTPException(422, "; ".join(errors[:5]))
 
         return resolved_scenario  # Возвращаем сценарий с подставленными значениями
     
 
     @staticmethod
-    def process_fields(resolved_scenario, fields, path_parts, field_type, endpoint):
+    def process_fields(resolved_scenario, fields, path_parts, field_type, endpoint, errors):
         """Обрабатывает словарь parameters или validation"""
 
         # Итерируемся по копии словаря, чтобы можно было безопасно удалять элементы
@@ -279,7 +288,7 @@ class GenerateValues:
                         print('-'*58)
 
             except Exception as e:
-                print(f"Ошибка обработки поля {full_key}: {e}")
+                errors.append(f"{endpoint}.{full_key}: {e}")
                 continue
 
     @staticmethod

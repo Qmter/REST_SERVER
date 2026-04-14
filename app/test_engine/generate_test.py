@@ -218,7 +218,9 @@ class GeneralGenerator:
 
         # TODO Доработать http exception + logging
         except ValueError as e:
-            raise HTTPException(422, e)
+            raise HTTPException(422, str(e))
         except Exception as e:
-            raise HTTPException(422, e)
-
+            # Прокидываем HTTPException как есть, чтобы FastAPI корректно сериализовал ответ
+            if isinstance(e, HTTPException):
+                raise e
+            raise HTTPException(422, str(e))

@@ -43,4 +43,4 @@ class ScenarioParser:
 
         except Exception as e:
             print(f"Ошибка при поиске endpoints: {e}")
-            raise HTTPException(422, e)
+            raise HTTPException(422, str(e))

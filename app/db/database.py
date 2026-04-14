@@ -5,6 +5,7 @@ from app.core.config import settings
 
 def get_db():
 
+
     connection = pymysql.connect(
         host=settings.DB_HOST,
         port=settings.DB_PORT,

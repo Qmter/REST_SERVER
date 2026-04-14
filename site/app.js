@@ -44,12 +44,16 @@ const authApiKey = document.getElementById("authApiKey");
 const connectionStatus = document.getElementById("connectionStatus");
 const deleteConnectionBtn = document.getElementById("deleteConnection");
 const connectionCurrent = document.getElementById("connectionCurrent");
+const connectionCompactToggle = document.getElementById("connectionCompactToggle");
+const connectionSummary = document.getElementById("connectionSummary");
 const membersList = document.getElementById("membersList");
 const memberForm = document.getElementById("memberForm");
 const memberUsername = document.getElementById("memberUsername");
 const memberAccess = document.getElementById("memberAccess");
 const memberStatus = document.getElementById("memberStatus");
 const membersPanel = document.getElementById("membersPanel");
+const membersSummary = document.getElementById("membersSummary");
+const membersCompactToggle = document.getElementById("membersCompactToggle");
 // create page elements
 const createPageForm = document.getElementById("scenarioCreateForm");
 const createPageName = document.getElementById("scenarioCreateName");
@@ -84,6 +88,8 @@ let currentIsOwner = false;
 let currentAccessType = null;
 let scenarioCache = [];
 let testsCache = [];
+let connectionLastData = null;
+let membersLast = [];
 
 if (connectionAuthType) {
   connectionAuthType.addEventListener("change", (e) => {
@@ -106,6 +112,39 @@ function clearAuth() {
 
 function redirectToLogin() {
   window.location.href = "login.html";
+}
+
+function togglePanelCompact(panel, toggleBtn, forceValue) {
+  if (!panel) return;
+  const next = forceValue !== undefined ? forceValue : !panel.classList.contains("compact");
+  panel.classList.toggle("compact", next);
+  if (toggleBtn) {
+    toggleBtn.textContent = next ? "Развернуть" : "Компактно";
+  }
+}
+
+function updateConnectionSummary() {
+  if (!connectionSummary) return;
+  const base = connectionLastData?.base_url || "—";
+  const auth = connectionLastData?.authSummary || "—";
+  const openapi = openapiStatus?.textContent || "—";
+  connectionSummary.innerHTML = `
+    <div><strong>Base URL:</strong> ${base}</div>
+    <div><strong>Auth:</strong> ${auth}</div>
+    <div><strong>OpenAPI:</strong> ${openapi}</div>
+  `;
+}
+
+function updateMembersSummary() {
+  if (!membersSummary) return;
+  const count = membersLast.length;
+  const owners = membersLast.filter((m) => m.name_access_type === "owner").map((m) => m.username);
+  membersSummary.innerHTML = count
+    ? `
+      <div><strong>Участников:</strong> ${count}</div>
+      <div><strong>Owner:</strong> ${owners.join(", ") || "—"}</div>
+    `
+    : "<div class='muted'>Пока никого нет</div>";
 }
 
 async function api(path, options = {}) {
@@ -473,13 +512,27 @@ function renderScenarios() {
   scenarioList.innerHTML = "";
   items.forEach((sc) => {
     const el = document.createElement("div");
-    el.className = "scenario-item";
+    el.className = "scenario-item scenario-card scenario-card--scenario";
+
+    const head = document.createElement("div");
+    head.className = "card-head";
+
+    const chip = document.createElement("span");
+    chip.className = "card-chip";
+    chip.textContent = "Сценарий";
+
+    const idBadge = document.createElement("span");
+    idBadge.className = "card-id";
+    idBadge.textContent = `#${sc.id_scenario || "—"}`;
+
+    head.append(chip, idBadge);
+
     const title = document.createElement("h4");
     title.textContent = sc.name_scenario || "Без имени";
     const meta = document.createElement("p");
     meta.className = "muted";
     meta.textContent = "Нажмите, чтобы открыть";
-    el.append(title, meta);
+    el.append(head, title, meta);
 
     const actions = document.createElement("div");
     actions.className = "scenario-actions-inline";
@@ -565,13 +618,29 @@ function renderTests() {
   testList.innerHTML = "";
   items.forEach((t) => {
     const el = document.createElement("div");
-    el.className = "scenario-item";
+    el.className = "scenario-item scenario-card scenario-card--test";
+
+    const head = document.createElement("div");
+    head.className = "card-head";
+
+    const chip = document.createElement("span");
+    chip.className = "card-chip";
+    chip.textContent = "Тест";
+
+    const idBadge = document.createElement("span");
+    idBadge.className = "card-id";
+    idBadge.textContent = `#${t.id_test || "—"}`;
+
+    head.append(chip, idBadge);
+
     const title = document.createElement("h4");
     title.textContent = t.name_test || `Тест #${t.id_test}`;
+
     const meta = document.createElement("p");
     meta.className = "muted";
-    meta.textContent = `ID: ${t.id_test || "—"}`;
-    el.append(title, meta);
+    meta.textContent = "Просмотр содержимого и деталей теста";
+
+    el.append(head, title, meta);
 
     const actions = document.createElement("div");
     actions.className = "scenario-actions-inline";
@@ -585,6 +654,133 @@ function renderTests() {
 
     testList.appendChild(el);
   });
+}
+
+function renderTestContent(container, content) {
+  if (!container) return;
+  if (!content || typeof content !== "object") {
+    container.textContent = "Нет данных теста";
+    return;
+  }
+
+  const sectionsOrder = ["PRESET", "TESTS", "AFTER-TEST"];
+  container.innerHTML = "";
+
+  sectionsOrder.forEach((sectionKey) => {
+    if (sectionKey === "TESTS") {
+      const testIds = Object.keys(content).filter((k) => k !== "PRESET" && k !== "AFTER-TEST");
+      if (!testIds.length) return;
+      const section = document.createElement("div");
+      section.className = "test-section";
+      const title = document.createElement("h3");
+      title.innerHTML = '<span class="badge-soft">TESTS</span>';
+      section.append(title);
+
+      testIds.sort((a, b) => Number(a) - Number(b)).forEach((tid) => {
+        const card = document.createElement("div");
+        card.className = "test-card";
+        const data = content[tid] || {};
+        const h4 = document.createElement("h4");
+        h4.textContent = data.description || `Тест #${tid}`;
+        const meta = document.createElement("p");
+        meta.className = "muted";
+        meta.textContent = `№: ${tid}`;
+        card.append(h4, meta);
+
+        const stepsWrap = document.createElement("div");
+        stepsWrap.className = "step-list";
+
+        Object.entries(data)
+          .filter(([k]) => k.includes("."))
+          .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+          .forEach(([stepId, step]) => {
+            stepsWrap.appendChild(renderStepCard(stepId, step));
+          });
+
+        card.append(stepsWrap);
+        section.append(card);
+      });
+
+      container.append(section);
+    } else if (content[sectionKey]) {
+      const section = document.createElement("div");
+      section.className = "test-section";
+      const title = document.createElement("h3");
+      title.innerHTML = `<span class="badge-soft">${sectionKey}</span>`;
+      section.append(title);
+
+      const data = content[sectionKey];
+      const steps = data?.steps || data; // иногда без steps
+      const stepsWrap = document.createElement("div");
+      stepsWrap.className = "step-list";
+      Object.entries(steps || {})
+        .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+        .forEach(([stepId, step]) => {
+          stepsWrap.appendChild(renderStepCard(stepId, step));
+        });
+      section.append(stepsWrap);
+      container.append(section);
+    }
+  });
+}
+
+function renderStepCard(stepId, step) {
+  const card = document.createElement("div");
+  card.className = "step-card";
+
+  const head = document.createElement("div");
+  head.className = "step-head";
+
+  const method = document.createElement("span");
+  method.className = "pill-method";
+  method.textContent = step.type || step.method || "—";
+
+  const endpoint = document.createElement("span");
+  endpoint.className = "pill-endpoint";
+  endpoint.textContent = step.endpoint || "—";
+
+  const stepTag = document.createElement("span");
+  stepTag.className = "pill-step";
+  stepTag.textContent = `step ${stepId}`;
+
+  head.append(method, endpoint, stepTag);
+
+  const meta = document.createElement("div");
+  meta.className = "step-meta";
+  if (step.errCode !== undefined) meta.append(textPill(`errCode: ${step.errCode}`));
+  if (step.httpCode !== undefined) meta.append(textPill(`httpCode: ${step.httpCode}`));
+
+  card.append(head, meta);
+
+  if (step.schema) {
+    card.append(makeCodeBlock("schema", step.schema));
+  }
+  if (step.arguments) {
+    card.append(makeCodeBlock("arguments", step.arguments));
+  }
+  if (step.validation) {
+    card.append(makeCodeBlock("validation", step.validation));
+  }
+
+  return card;
+}
+
+function textPill(text) {
+  const span = document.createElement("span");
+  span.textContent = text;
+  return span;
+}
+
+function makeCodeBlock(label, obj) {
+  const wrap = document.createElement("div");
+  const lbl = document.createElement("div");
+  lbl.className = "muted";
+  lbl.textContent = label;
+  const pre = document.createElement("div");
+  pre.className = "code-block";
+  pre.textContent = JSON.stringify(obj, null, 2);
+  wrap.append(lbl, pre);
+  return wrap;
 }
 
 async function bootstrapTestPage() {
@@ -602,7 +798,7 @@ async function bootstrapTestPage() {
     const data = await api(`/tests/${workspaceId}/detail/${testId}`);
     if (testTitle) testTitle.textContent = data.name_test || `Тест #${data.id_test}`;
     if (testMeta) testMeta.textContent = `ID: ${data.id_test} · Сценарий: ${data.id_scenario} · Сгенерирован: ${data.generated_at || "—"}`;
-    if (testContent) testContent.textContent = JSON.stringify(data.content_test || {}, null, 2);
+    if (testContent) renderTestContent(testContent, data.content_test);
   } catch (err) {
     showInfoModal(err.message || "Не удалось загрузить тест");
   }
@@ -622,8 +818,10 @@ async function loadMembers(workspaceId) {
   membersList.innerHTML = "<div class='muted'>Загружаю участников...</div>";
   try {
     const members = await api(`/workspaces/${workspaceId}/members`);
+    membersLast = members;
     if (!members.length) {
       membersList.innerHTML = "<div class='muted'>Пока никого нет</div>";
+      updateMembersSummary();
       return;
     }
     membersList.innerHTML = "";
@@ -691,8 +889,11 @@ async function loadMembers(workspaceId) {
 
       membersList.appendChild(item);
     });
+    updateMembersSummary();
   } catch (err) {
     membersList.innerHTML = `<div class='muted'>${err.message}</div>`;
+    membersLast = [];
+    updateMembersSummary();
   }
 }
 
@@ -795,6 +996,7 @@ async function loadConnections(workspaceId, workspaceName) {
   connectionStatus.textContent = "Загружаю подключение...";
   connectionWorkspaceLabel.textContent = workspaceName || `Workspace #${workspaceId}`;
   currentConnectionId = null;
+   connectionLastData = null;
 
   try {
     const list = await api(`/connections/${workspaceId}`);
@@ -804,6 +1006,7 @@ async function loadConnections(workspaceId, workspaceName) {
       connectionStatus.textContent = "Подключение еще не настроено для этого workspace";
       if (deleteConnectionBtn) deleteConnectionBtn.disabled = true;
       if (connectionCurrent) connectionCurrent.textContent = "Нет сохраненного подключения";
+      updateConnectionSummary();
       currentConnectionId = null;
       return;
     }
@@ -841,6 +1044,11 @@ async function loadConnections(workspaceId, workspaceName) {
         return "—";
       })();
 
+      connectionLastData = {
+        base_url: first.base_url || "—",
+        authSummary
+      };
+
       connectionCurrent.innerHTML = `
         <div><strong>Base URL:</strong> ${first.base_url || "—"}</div>
         <div><strong>Auth:</strong> ${authSummary}</div>
@@ -850,6 +1058,7 @@ async function loadConnections(workspaceId, workspaceName) {
     connectionStatus.textContent = "Подключение сохранено и относится только к выбранному workspace";
     // подгружаем openapi
     await loadOpenapi(workspaceId);
+    updateConnectionSummary();
   } catch (err) {
     connectionStatus.textContent = err.message;
   }
@@ -927,6 +1136,8 @@ if (deleteConnectionBtn) {
         currentConnectionId = null;
         connectionStatus.textContent = "Удалено";
         if (connectionCurrent) connectionCurrent.textContent = "Нет сохраненного подключения";
+        connectionLastData = null;
+        updateConnectionSummary();
         await loadConnections(currentWorkspaceId, connectionWorkspaceLabel?.textContent);
       } catch (err) {
         connectionStatus.textContent = err.message;
@@ -952,6 +1163,8 @@ async function loadOpenapi(workspaceId) {
     openapiStatus.textContent = "Схема загружена";
   } catch (err) {
     openapiStatus.textContent = "Схема не загружена";
+  } finally {
+    updateConnectionSummary();
   }
 }
 
@@ -1043,6 +1256,18 @@ applyTheme(localStorage.getItem("theme") || "dark");
 if (themeSelect) {
   themeSelect.addEventListener("change", (e) => {
     applyTheme(e.target.value);
+  });
+}
+
+if (connectionCompactToggle && connectionPanel) {
+  connectionCompactToggle.addEventListener("click", () => {
+    togglePanelCompact(connectionPanel, connectionCompactToggle);
+  });
+}
+
+if (membersCompactToggle && membersPanel) {
+  membersCompactToggle.addEventListener("click", () => {
+    togglePanelCompact(membersPanel, membersCompactToggle);
   });
 }
 

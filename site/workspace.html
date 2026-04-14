@@ -124,23 +124,29 @@
           <div class="panel-header">
             <h2>Подключение к устройству</h2>
             <span id="connectionWorkspaceLabel" class="muted">Загружаю…</span>
+            <div class="actions">
+              <button type="button" class="ghost" id="connectionCompactToggle">Компактно</button>
+            </div>
           </div>
 
-          <form id="connectionForm" class="stacked">
-            <label for="connectionBaseUrl">Base URL</label>
-            <input
-              type="text"
-              id="connectionBaseUrl"
-              placeholder="https://192.168.1.1:8080"
-              required
-            >
-
-            <label for="connectionAuthType">Тип авторизации</label>
-            <select id="connectionAuthType">
-              <option value="1">Basic (логин/пароль)</option>
-              <option value="2">Bearer Token</option>
-              <option value="3">API Key</option>
-            </select>
+          <form id="connectionForm" class="stacked connection-form">
+            <div class="form-field">
+              <label for="connectionBaseUrl">Base URL</label>
+              <input
+                type="text"
+                id="connectionBaseUrl"
+                placeholder="https://192.168.1.1:8080"
+                required
+              >
+            </div>
+            <div class="form-field slim">
+              <label for="connectionAuthType">Тип авторизации</label>
+              <select id="connectionAuthType">
+                <option value="1">Basic (логин/пароль)</option>
+                <option value="2">Bearer Token</option>
+                <option value="3">API Key</option>
+              </select>
+            </div>
 
             <div class="stacked auth-fields">
               <div class="auth-block auth-basic">
@@ -164,26 +170,35 @@
           <div id="connectionStatus" class="muted"></div>
           <div id="connectionCurrent" class="connection-current muted">Нет сохраненного подключения</div>
 
-          <div class="stacked" id="openapiBlock">
-            <h3 style="margin:8px 0 4px;">OpenAPI схема</h3>
-            <div class="actions">
+          <div id="connectionSummary" class="compact-summary"></div>
+
+          <div class="card-subsection" id="openapiBlock">
+            <div class="card-subsection__head">
+              <h3>OpenAPI схема</h3>
+              <span class="pill" id="openapiStatus">—</span>
+            </div>
+            <div class="actions wrap">
               <input type="file" id="openapiFile" accept=".json,application/json" style="display:none;">
               <button type="button" id="chooseOpenapiBtn" class="ghost">Загрузить файл</button>
               <button type="button" id="uploadOpenapiBtn" class="ghost">Сохранить схему</button>
               <button type="button" id="deleteOpenapiBtn" class="ghost danger">Удалить схему</button>
             </div>
-            <div id="openapiStatus" class="muted"></div>
           </div>
         </section>
 
         <section class="panel slim" id="membersPanel" style="display:none;">
           <div class="panel-header">
             <h2>Участники</h2>
+            <div class="actions">
+              <button type="button" class="ghost" id="membersCompactToggle">Компактно</button>
+            </div>
           </div>
 
           <div id="membersList" class="members-list"></div>
 
-          <form id="memberForm" class="stacked">
+          <div id="membersSummary" class="compact-summary"></div>
+
+          <form id="memberForm" class="stacked card-subsection">
             <label for="memberUsername">Логин пользователя</label>
             <input type="text" id="memberUsername" placeholder="username" required>
 

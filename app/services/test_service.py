@@ -73,7 +73,7 @@ def generate_tests_service(db, id_workspace, id_scenario):
 
     openapi_spec = get_openapi(db=db, id_workspace=id_workspace)
 
-    if not openapi_spec:
+    if not openapi_spec or openapi_spec is None:
         raise HTTPException(404, "OpenAPI not found")
 
     content_openapi = openapi_spec['openapi_schema']

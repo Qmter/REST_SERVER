@@ -400,6 +400,63 @@ display: none;
   box-shadow: var(--shadow);
 }
 
+.panel#connectionPanel {
+  background: linear-gradient(145deg, rgba(99, 102, 241, 0.05), rgba(225, 29, 72, 0.04)), var(--panel-bg);
+  border: 1px solid color-mix(in srgb, var(--panel-border) 70%, rgba(99,102,241,0.3));
+}
+
+.connection-form .form-row {
+  display: grid;
+  grid-template-columns: 1.6fr 0.8fr;
+  gap: 10px;
+  }
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field.slim select {
+  min-height: 44px;
+}
+
+.card-subsection {
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px;
+  background: color-mix(in srgb, var(--panel-bg) 80%, var(--accent-soft) 20%);
+  gap: 10px;
+}
+
+.card-subsection__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.actions.wrap {
+  flex-wrap: wrap;
+}
+
+.panel.compact {
+  padding: 14px 16px;
+}
+
 .panel-header {
   display: flex;
   align-items: center;
@@ -487,17 +544,17 @@ display: none;
 }
 
 .scenario-item {
-  padding: 12px 14px;
+  padding: 14px 16px;
   border: 1px solid var(--panel-border);
-  border-radius: 10px;
-  background: var(--panel-bg);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(225, 29, 72, 0.04), transparent 38%), var(--panel-bg);
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease, background 0.2s ease;
 }
 
 .scenario-item:hover {
   border-color: var(--accent);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
   transform: translateY(-1px);
 }
 
@@ -510,15 +567,244 @@ display: none;
   margin: 0;
 }
 
-.scenario-content {
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
+.compact-summary {
+  display: none;
+  margin-top: 8px;
+  padding: 10px 12px;
   border-radius: 10px;
-  padding: 14px;
-  white-space: pre-wrap;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--text-base);
+  line-height: 1.4;
+  gap: 6px;
+  flex-direction: column;
 }
 
+.panel.compact .compact-summary {
+  display: flex;
+}
+
+.panel.compact #connectionForm,
+.panel.compact #openapiBlock,
+.panel.compact #memberForm,
+.panel.compact #membersList {
+  display: none !important;
+}
+
+.scenario-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scenario-card .card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-chip {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.card-id {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(99, 102, 241, 0.1);
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.scenario-card--test {
+  border-left: 4px solid #6366f1;
+}
+
+.scenario-card--scenario {
+  border-left: 4px solid var(--accent);
+}
+
+.scenario-actions-inline {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.scenario-content {
+  position: relative;
+  background: radial-gradient(circle at 20% 20%, rgba(225, 29, 72, 0.06), transparent 36%), var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-left: 4px solid var(--accent);
+  border-radius: 12px;
+  padding: 16px 18px 14px;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+
+.scenario-content::before {
+  content: "JSON";
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.test-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.test-section {
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--panel-bg);
+  box-shadow: var(--shadow);
+}
+
+.test-section h3 {
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-soft {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.test-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 10px;
+  background: linear-gradient(145deg, rgba(99,102,241,0.04), transparent 40%), var(--panel-bg);
+}
+
+.test-card h4 {
+  margin: 0 0 6px;
+}
+
+.test-card .muted {
+  margin: 0 0 6px;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.step-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--panel-bg) 85%, var(--accent-soft) 15%);
+}
+
+.step-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.pill-method {
+  padding: 3px 7px;
+  border-radius: 7px;
+  font-weight: 700;
+  max-width: max-content;
+  color: #fff;
+  background: #6366f1;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.pill-endpoint {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  color: var(--text-base);
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pill-step {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.06);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.code-block {
+  position: relative;
+  background: var(--bg-base);
+  color: var(--text-base);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  padding: 12px 12px 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  white-space: pre;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow: auto;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.code-block::before {
+  content: "JSON";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-base);
+  color: var(--text-base);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.step-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text-muted);
+}
 #scenarioEditJson {
   min-height: 300px;
   max-height: 70vh;
