@@ -66,7 +66,7 @@ def get_connections_by_workspace(db, id_workspace):
             (id_workspace,)
         )
 
-        return cursor.fetchall()
+        return cursor.fetchone()
 
 
 def delete_connection(db, id_connection):

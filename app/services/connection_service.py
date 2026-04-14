@@ -98,16 +98,43 @@ def list_connections_service(db, id_user, id_workspace):
     # if workspace["id_user"] != id_user:
     #     raise HTTPException(403, "Forbidden")
 
-    connections = get_connections_by_workspace(db=db, id_workspace=id_workspace)
+    raw_connections = get_connections_by_workspace(db=db, id_workspace=id_workspace)
 
-    for conn in connections:
-        if conn.get("auth_data"):
+    if not raw_connections:
+        return []
+    if isinstance(raw_connections, dict):
+        raw_connections = [raw_connections]
+
+    normalized = []
+    for conn in raw_connections:
+        # Приводим строковые/tuple результаты к dict
+        if isinstance(conn, dict):
+            c = conn
+        else:
             try:
-                conn["auth_data"] = json.loads(conn["auth_data"])
-            except json.JSONDecodeError:
-                conn["auth_data"] = None
+                c = json.loads(conn)
+            except Exception:
+                # если пришёл tuple/list, попробуем собрать dict по порядку
+                if isinstance(conn, (list, tuple)) and len(conn) >= 4:
+                    c = {
+                        "id_connection": conn[0],
+                        "id_workspace": conn[1],
+                        "id_auth_type": conn[2],
+                        "base_url": conn[3],
+                        "auth_data": conn[4] if len(conn) > 4 else None,
+                    }
+                else:
+                    continue
 
-    return connections
+        if "auth_data" in c and isinstance(c["auth_data"], str):
+            try:
+                c["auth_data"] = json.loads(c["auth_data"])
+            except json.JSONDecodeError:
+                c["auth_data"] = None
+
+        normalized.append(c)
+
+    return normalized
 
 
 def delete_connection_service(db, id_user, id_connection):

@@ -9,10 +9,14 @@ from app.services.test_service import (
     list_tests_service,
     get_test_detail_service,
     delete_test_service,
-    generate_tests_service
+    generate_tests_service,
+    run_test_service,
+    list_test_executions_service,
+    get_test_execution_log_service
 )
 
 from app.db.database import get_db
+from app.core.dependencies import get_current_user
 from app.core.dependencies_access import check_workspace_access_dep
 
 
@@ -60,3 +64,38 @@ def generate_tests(
         id_workspace=id_workspace,
         id_scenario=id_scenario
     )
+
+@router.post("/{id_workspace}/run/{id_test}")
+def run_test(
+    id_workspace: int,
+    id_test: int,
+    user=Depends(get_current_user),
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("write"))
+):
+    return run_test_service(
+        db=db,
+        id_workspace=id_workspace,
+        id_test=id_test,
+        id_user=user["id_user"]
+    )
+
+
+@router.get("/{id_workspace}/executions/{id_test}")
+def list_test_executions(
+    id_workspace: int,
+    id_test: int,
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("read"))
+):
+    return list_test_executions_service(db=db, id_workspace=id_workspace, id_test=id_test)
+
+
+@router.get("/{id_workspace}/executions/log/{id_execution}")
+def get_test_execution_log(
+    id_workspace: int,
+    id_execution: int,
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("read"))
+):
+    return get_test_execution_log_service(db=db, id_workspace=id_workspace, id_execution=id_execution)

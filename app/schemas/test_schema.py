@@ -5,6 +5,8 @@ from datetime import datetime
 class TestPreview(BaseModel):
     id_test: int
     name_test: str
+    last_status: str | None = None
+    last_start: datetime | None = None
 
 
 class TestDetail(BaseModel):
@@ -14,3 +16,5 @@ class TestDetail(BaseModel):
     content_test: dict
     last_seed: str
     generated_at: datetime | None = None
+    last_status: str | None = None
+    last_start: datetime | None = None

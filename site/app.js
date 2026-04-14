@@ -76,6 +76,15 @@ const testTitle = document.getElementById("testTitle");
 const testMeta = document.getElementById("testMeta");
 const testContent = document.getElementById("testContent");
 const backToWorkspaceFromTest = document.getElementById("backToWorkspaceFromTest");
+const runTestDetailBtn = document.getElementById("runTestDetailBtn");
+const testRunStatus = document.getElementById("testRunStatus");
+const testRunLogWrap = document.getElementById("testRunLogWrap");
+const testRunLog = document.getElementById("testRunLog");
+const executionsList = document.getElementById("executionsList");
+const logModal = document.getElementById("logModal");
+const executionLogModal = document.getElementById("executionLogModal");
+const logModalClose = document.getElementById("logModalClose");
+const logDownloadBtn = document.getElementById("logDownloadBtn");
 const openapiFile = document.getElementById("openapiFile");
 const chooseOpenapiBtn = document.getElementById("chooseOpenapiBtn");
 const uploadOpenapiBtn = document.getElementById("uploadOpenapiBtn");
@@ -638,7 +647,9 @@ function renderTests() {
 
     const meta = document.createElement("p");
     meta.className = "muted";
-    meta.textContent = "Просмотр содержимого и деталей теста";
+    const lastStatus = t.last_status ? ` · Статус: ${t.last_status}` : "";
+    const lastStart = t.last_start ? ` · ${new Date(t.last_start).toLocaleString()}` : "";
+    meta.textContent = `ID: ${t.id_test || "—"}${lastStatus}${lastStart}`;
 
     el.append(head, title, meta);
 
@@ -649,7 +660,14 @@ function renderTests() {
     openBtn.className = "ghost";
     openBtn.textContent = "Открыть";
     openBtn.onclick = () => window.location.href = `./test.html?workspace=${currentWorkspaceId}&id=${t.id_test}`;
-    actions.append(openBtn);
+    const runBtn = document.createElement("button");
+    runBtn.type = "button";
+    runBtn.textContent = "Запустить";
+    runBtn.onclick = async (e) => {
+      e.stopPropagation();
+      await runTestApi(t.id_test, runBtn);
+    };
+    actions.append(openBtn, runBtn);
     el.append(actions);
 
     testList.appendChild(el);
@@ -783,6 +801,48 @@ function makeCodeBlock(label, obj) {
   return wrap;
 }
 
+async function runTestApi(testId, btn, workspaceId = currentWorkspaceId, statusEl = null) {
+  if (!workspaceId || !testId) return;
+  const prevText = btn?.textContent;
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Запуск...";
+  }
+  if (statusEl) {
+    statusEl.style.display = "inline-flex";
+    statusEl.className = "badge-soft status-badge status-running";
+    statusEl.textContent = "Запуск...";
+  }
+  console.log(`Running test ${testId} in workspace ${workspaceId}`);
+  try {
+    const res = await api(`/tests/${workspaceId}/run/${testId}`, { method: "POST" });
+    const status = res?.status || "unknown";
+    const failedList = res?.failed_indexes || [];
+    const failed = failedList.length ? `\nFailed: ${failedList.join(", ")}` : "";
+    showInfoModal(`Статус: ${status}${failed}`);
+    if (testRunLog && res?.log !== undefined) {
+      testRunLog.textContent = res.log || "";
+      if (testRunLogWrap) testRunLogWrap.style.display = "block";
+    }
+    if (statusEl) {
+      statusEl.className = `badge-soft status-badge ${status === "FAIL" ? "status-fail" : "status-success"}`;
+      statusEl.textContent = failedList.length ? `Статус: ${status}, failed: ${failedList.join(", ")}` : `Статус: ${status}`;
+    }
+    await loadExecutions(workspaceId, testId);
+  } catch (err) {
+    showInfoModal(err.message || "Ошибка запуска теста");
+    if (statusEl) {
+      statusEl.className = "badge-soft status-badge status-error";
+      statusEl.textContent = "Ошибка запуска";
+    }
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = prevText || "Запустить";
+    }
+  }
+}
+
 async function bootstrapTestPage() {
   const params = new URLSearchParams(window.location.search);
   const workspaceId = Number(params.get("workspace"));
@@ -794,14 +854,88 @@ async function bootstrapTestPage() {
   if (backToWorkspaceFromTest) {
     backToWorkspaceFromTest.onclick = () => window.location.href = `workspace.html?id=${workspaceId}`;
   }
+  if (runTestDetailBtn) {
+    runTestDetailBtn.onclick = async () => {
+      await runTestApi(testId, runTestDetailBtn, workspaceId, testRunStatus);
+    };
+  }
   try {
     const data = await api(`/tests/${workspaceId}/detail/${testId}`);
     if (testTitle) testTitle.textContent = data.name_test || `Тест #${data.id_test}`;
     if (testMeta) testMeta.textContent = `ID: ${data.id_test} · Сценарий: ${data.id_scenario} · Сгенерирован: ${data.generated_at || "—"}`;
     if (testContent) renderTestContent(testContent, data.content_test);
+    if (testRunLogWrap) testRunLogWrap.style.display = "none";
+    if (testRunLog) testRunLog.textContent = "";
+    await loadExecutions(workspaceId, testId);
   } catch (err) {
     showInfoModal(err.message || "Не удалось загрузить тест");
   }
+}
+
+async function loadExecutions(workspaceId, testId) {
+  if (!executionsList) return;
+  executionsList.innerHTML = "<div class='muted'>Загружаю...</div>";
+  try {
+    const data = await api(`/tests/${workspaceId}/executions/${testId}`);
+    if (!data.length) {
+      executionsList.innerHTML = "<div class='muted'>Запусков пока нет</div>";
+      return;
+    }
+    executionsList.innerHTML = "";
+    data.forEach((row) => {
+      const item = document.createElement("div");
+      item.className = "execution-item";
+      const meta = document.createElement("div");
+      meta.className = "execution-meta";
+      meta.innerHTML = `<strong>${row.test_status || "unknown"}</strong><span class='muted'>${row.start_at || ""}</span><span class='muted'>time: ${row.time_execution ?? "—"}s, failed: ${(row.failed_indexes || []).join(", ") || "—"}</span>`;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ghost";
+      btn.textContent = "Показать лог";
+      btn.onclick = async () => {
+        await loadExecutionLog(workspaceId, row.id_test_execution);
+      };
+      item.append(meta, btn);
+      executionsList.appendChild(item);
+    });
+  } catch (err) {
+    executionsList.innerHTML = `<div class='muted'>${err.message}</div>`;
+  }
+}
+
+async function loadExecutionLog(workspaceId, execId) {
+  if (!executionLogModal || !logModal) return;
+  executionLogModal.textContent = "Загружаю лог...";
+  logModal.classList.add("active");
+  try {
+    const res = await api(`/tests/${workspaceId}/executions/log/${execId}`);
+    const logText = res?.log ?? JSON.stringify(res, null, 2);
+    executionLogModal.textContent = logText;
+    if (logDownloadBtn) {
+      logDownloadBtn.onclick = () => downloadText(logText, `execution_${execId}.log`);
+    }
+  } catch (err) {
+    executionLogModal.textContent = err.message || "Не удалось загрузить лог";
+  }
+}
+
+if (logModal && logModalClose) {
+  logModalClose.onclick = () => logModal.classList.remove("active");
+  logModal.addEventListener("click", (e) => {
+    if (e.target === logModal) logModal.classList.remove("active");
+  });
+}
+
+function downloadText(text, filename) {
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 async function deleteWorkspaceApi(id) {

@@ -27,16 +27,42 @@
     </div>
 
     <div class="content">
-      <section class="panel">
-        <div class="panel-header">
-          <h1 id="testTitle">Тест</h1>
-          <div class="actions">
-            <button type="button" class="ghost" id="backToWorkspaceFromTest">← К workspace</button>
+      <div class="panel-grid">
+        <section class="panel" style="min-height:100%;">
+          <div class="panel-header">
+            <h1 id="testTitle">Тест</h1>
+            <div class="actions">
+              <span id="testRunStatus" class="badge-soft" style="display:none;"></span>
+              <button type="button" class="ghost" id="backToWorkspaceFromTest">← К workspace</button>
+              <button type="button" id="runTestDetailBtn">Запустить</button>
+            </div>
           </div>
-        </div>
-        <p class="muted" id="testMeta"></p>
-        <div id="testContent" class="test-view">Загружаю...</div>
-      </section>
+          <p class="muted" id="testMeta"></p>
+          <div id="testRunLogWrap" style="display:none;">
+            <div class="muted" style="margin: 6px 0 4px;">Лог выполнения</div>
+            <div id="testRunLog" class="code-block"></div>
+          </div>
+          <div id="testContent" class="test-view">Загружаю...</div>
+        </section>
+
+        <section class="panel slim" id="executionsPanel">
+          <div class="panel-header">
+            <h2>История запусков</h2>
+          </div>
+          <div id="executionsList" class="scenario-list"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="logModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" style="max-width: 920px;">
+      <h3>Лог выполнения</h3>
+      <pre id="executionLogModal" class="code-block" style="max-height:60vh; overflow:auto;"></pre>
+      <div class="actions" style="justify-content: flex-end;">
+        <button type="button" class="ghost" id="logDownloadBtn">Сохранить лог</button>
+        <button type="button" id="logModalClose">Закрыть</button>
+      </div>
     </div>
   </div>
 
