@@ -44,6 +44,7 @@ const authApiKey = document.getElementById("authApiKey");
 const connectionStatus = document.getElementById("connectionStatus");
 const deleteConnectionBtn = document.getElementById("deleteConnection");
 const connectionCurrent = document.getElementById("connectionCurrent");
+const checkConnectionBtn = document.getElementById("checkConnectionBtn");
 const connectionCompactToggle = document.getElementById("connectionCompactToggle");
 const connectionSummary = document.getElementById("connectionSummary");
 const membersList = document.getElementById("membersList");
@@ -80,6 +81,8 @@ const runTestDetailBtn = document.getElementById("runTestDetailBtn");
 const testRunStatus = document.getElementById("testRunStatus");
 const testRunLogWrap = document.getElementById("testRunLogWrap");
 const testRunLog = document.getElementById("testRunLog");
+const toggleTestRunLogBtn = document.getElementById("toggleTestRunLogBtn");
+const closeTestRunLogBtn = document.getElementById("closeTestRunLogBtn");
 const executionsList = document.getElementById("executionsList");
 const logModal = document.getElementById("logModal");
 const executionLogModal = document.getElementById("executionLogModal");
@@ -801,6 +804,29 @@ function makeCodeBlock(label, obj) {
   return wrap;
 }
 
+function setInlineRunLogVisible(visible) {
+  if (!testRunLogWrap) return;
+  testRunLogWrap.style.display = visible ? "block" : "none";
+  if (!visible) {
+    testRunLogWrap.classList.remove("is-collapsed");
+    if (toggleTestRunLogBtn) toggleTestRunLogBtn.textContent = "Свернуть";
+  }
+}
+
+if (toggleTestRunLogBtn && testRunLogWrap) {
+  toggleTestRunLogBtn.addEventListener("click", () => {
+    const collapsed = testRunLogWrap.classList.toggle("is-collapsed");
+    toggleTestRunLogBtn.textContent = collapsed ? "Развернуть" : "Свернуть";
+  });
+}
+
+if (closeTestRunLogBtn) {
+  closeTestRunLogBtn.addEventListener("click", () => {
+    if (testRunLog) testRunLog.textContent = "";
+    setInlineRunLogVisible(false);
+  });
+}
+
 async function runTestApi(testId, btn, workspaceId = currentWorkspaceId, statusEl = null) {
   if (!workspaceId || !testId) return;
   const prevText = btn?.textContent;
@@ -822,7 +848,7 @@ async function runTestApi(testId, btn, workspaceId = currentWorkspaceId, statusE
     showInfoModal(`Статус: ${status}${failed}`);
     if (testRunLog && res?.log !== undefined) {
       testRunLog.textContent = res.log || "";
-      if (testRunLogWrap) testRunLogWrap.style.display = "block";
+      setInlineRunLogVisible(true);
     }
     if (statusEl) {
       statusEl.className = `badge-soft status-badge ${status === "FAIL" ? "status-fail" : "status-success"}`;
@@ -862,9 +888,10 @@ async function bootstrapTestPage() {
   try {
     const data = await api(`/tests/${workspaceId}/detail/${testId}`);
     if (testTitle) testTitle.textContent = data.name_test || `Тест #${data.id_test}`;
-    if (testMeta) testMeta.textContent = `ID: ${data.id_test} · Сценарий: ${data.id_scenario} · Сгенерирован: ${data.generated_at || "—"}`;
+    const genAt = data.generated_at ? new Date(data.generated_at).toLocaleString() : "—";
+    if (testMeta) testMeta.textContent = `ID: ${data.id_test} · Сценарий: ${data.id_scenario} · Сгенерирован: ${genAt}`;
     if (testContent) renderTestContent(testContent, data.content_test);
-    if (testRunLogWrap) testRunLogWrap.style.display = "none";
+    setInlineRunLogVisible(false);
     if (testRunLog) testRunLog.textContent = "";
     await loadExecutions(workspaceId, testId);
   } catch (err) {
@@ -887,7 +914,8 @@ async function loadExecutions(workspaceId, testId) {
       item.className = "execution-item";
       const meta = document.createElement("div");
       meta.className = "execution-meta";
-      meta.innerHTML = `<strong>${row.test_status || "unknown"}</strong><span class='muted'>${row.start_at || ""}</span><span class='muted'>time: ${row.time_execution ?? "—"}s, failed: ${(row.failed_indexes || []).join(", ") || "—"}</span>`;
+      const started = row.start_at ? new Date(row.start_at).toLocaleString() : "";
+      meta.innerHTML = `<strong>${row.test_status || "unknown"}</strong><span class='muted'>${started}</span><span class='muted'>time: ${row.time_execution ?? "—"}s, failed: ${(row.failed_indexes || []).join(", ") || "—"}</span>`;
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "ghost";
@@ -1295,8 +1323,10 @@ async function loadOpenapi(workspaceId) {
   try {
     const openapi_schema = await api(`/connections/openapi/${workspaceId}`);
     openapiStatus.textContent = "Схема загружена";
+    openapiStatus.className = "pill status-success";
   } catch (err) {
     openapiStatus.textContent = "Схема не загружена";
+    openapiStatus.className = "pill status-fail";
   } finally {
     updateConnectionSummary();
   }
@@ -1334,6 +1364,7 @@ if (uploadOpenapiBtn) {
         body: JSON.stringify({ openapi_schema: openapiFileContent })
       });
       openapiStatus.textContent = "Сохранено";
+      openapiStatus.className = "pill status-success";
       showInfoModal("OpenAPI сохранён");
     } catch (err) {
       showInfoModal(err.message || "Не удалось сохранить OpenAPI");
@@ -1350,6 +1381,7 @@ if (deleteOpenapiBtn) {
     try {
       await api(`/connections/openapi/${currentWorkspaceId}`, { method: "DELETE" });
       openapiStatus.textContent = "Схема удалена";
+      openapiStatus.className = "pill status-fail";
       openapiFileContent = null;
       if (openapiFile) openapiFile.value = "";
     } catch (err) {
@@ -1390,6 +1422,30 @@ applyTheme(localStorage.getItem("theme") || "dark");
 if (themeSelect) {
   themeSelect.addEventListener("change", (e) => {
     applyTheme(e.target.value);
+  });
+}
+
+if (checkConnectionBtn) {
+  checkConnectionBtn.addEventListener("click", async () => {
+    if (!currentWorkspaceId) return showInfoModal("Сначала выберите workspace");
+    connectionStatus.textContent = "Проверяю подключение...";
+    checkConnectionBtn.disabled = true;
+    try {
+      const res = await api(`/connections/check/${currentWorkspaceId}`);
+      if (res.connected) {
+        connectionStatus.textContent = "Подключение установлено";
+        showInfoModal("Подключение установлено");
+      } else {
+        const suffix = res.status_code ? ` (HTTP ${res.status_code})` : "";
+        connectionStatus.textContent = `Нет подключения${suffix}`;
+        showInfoModal(`Нет подключения${suffix}${res.detail ? `: ${res.detail}` : ""}`);
+      }
+    } catch (err) {
+      connectionStatus.textContent = `Нет подключения: ${err.message}`;
+      showInfoModal(`Нет подключения: ${err.message}`);
+    } finally {
+      checkConnectionBtn.disabled = false;
+    }
   });
 }
 

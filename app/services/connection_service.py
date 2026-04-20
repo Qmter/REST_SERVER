@@ -17,6 +17,7 @@ from app.repositories.workspace_repo import (
     get_workspace_membership,
     get_workspace_by_id_connection
 )
+from app.test_engine.utils.http_methods import Http_methods
 
 def create_connection_service(db, id_user, data):
 
@@ -172,3 +173,47 @@ def delete_openapi_service(db, id_workspace):
     delete_openapi(db, id_workspace)
 
     return {"status": "deleted"}
+
+
+def check_connection_service(db, id_workspace):
+    workspace = get_workspace_by_id(db=db, id_workspace=id_workspace)
+    if not workspace:
+        raise HTTPException(404, "Workspace not found")
+
+    connection = get_connections_by_workspace(db=db, id_workspace=id_workspace)
+    if not connection:
+        raise HTTPException(404, "Connection not found")
+
+    auth_data = connection.get("auth_data")
+    if isinstance(auth_data, str):
+        try:
+            auth_data = json.loads(auth_data)
+        except json.JSONDecodeError:
+            auth_data = {}
+
+    try:
+        response = Http_methods.get(
+            base_url=connection["base_url"],
+            endpoint="/system/platform",
+            auth_type=connection["id_auth_type"],
+            auth_data=auth_data or {}
+        )
+    except RuntimeError as e:
+        return {
+            "connected": False,
+            "status_code": None,
+            "detail": str(e)
+        }
+
+    if response is None:
+        return {
+            "connected": False,
+            "status_code": None,
+            "detail": "Empty response"
+        }
+
+    return {
+        "connected": response.status_code == 200,
+        "status_code": response.status_code,
+        "detail": "Connection established" if response.status_code == 200 else "Connection failed"
+    }

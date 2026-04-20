@@ -14,7 +14,8 @@ from app.services.connection_service import (
     modify_connection_service,
     get_openapi_service,
     delete_openapi_service,
-    update_openapi_service
+    update_openapi_service,
+    check_connection_service
 )
 
 from app.core.dependencies import get_current_user
@@ -93,3 +94,12 @@ def delete_openapi(
     access=Depends(check_workspace_access_dep("delete"))
 ):
     return delete_openapi_service(db, id_workspace)
+
+
+@router.get("/check/{id_workspace}")
+def check_connection(
+    id_workspace: int,
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("read"))
+):
+    return check_connection_service(db, id_workspace)
