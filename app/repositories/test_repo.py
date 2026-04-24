@@ -153,3 +153,61 @@ def get_log_execution(db, id_test_execution):
             (id_test_execution,)
         )
         return cursor.fetchone()
+
+
+def delete_test_execution_with_logs(db, id_test_execution):
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            DELETE FROM log_executions
+            WHERE id_test_execution = %s
+            """,
+            (id_test_execution,)
+        )
+        deleted_logs = cursor.rowcount
+
+        cursor.execute(
+            """
+            DELETE FROM tests_executions
+            WHERE id_test_execution = %s
+            """,
+            (id_test_execution,)
+        )
+        deleted_executions = cursor.rowcount
+
+        db.commit()
+        return {
+            "deleted_logs": deleted_logs,
+            "deleted_executions": deleted_executions
+        }
+
+
+def delete_test_executions_with_logs_by_test(db, id_test):
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            DELETE FROM log_executions
+            WHERE id_test_execution IN (
+                SELECT id_test_execution
+                FROM tests_executions
+                WHERE id_test = %s
+            )
+            """,
+            (id_test,)
+        )
+        deleted_logs = cursor.rowcount
+
+        cursor.execute(
+            """
+            DELETE FROM tests_executions
+            WHERE id_test = %s
+            """,
+            (id_test,)
+        )
+        deleted_executions = cursor.rowcount
+
+        db.commit()
+        return {
+            "deleted_logs": deleted_logs,
+            "deleted_executions": deleted_executions
+        }

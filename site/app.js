@@ -84,6 +84,7 @@ const testRunLog = document.getElementById("testRunLog");
 const toggleTestRunLogBtn = document.getElementById("toggleTestRunLogBtn");
 const closeTestRunLogBtn = document.getElementById("closeTestRunLogBtn");
 const executionsList = document.getElementById("executionsList");
+const deleteAllTestLogsBtn = document.getElementById("deleteAllTestLogsBtn");
 const logModal = document.getElementById("logModal");
 const executionLogModal = document.getElementById("executionLogModal");
 const logModalClose = document.getElementById("logModalClose");
@@ -98,6 +99,7 @@ let currentWorkspaceId = null;
 let currentConnectionId = null;
 let currentIsOwner = false;
 let currentAccessType = null;
+let currentExecutionLogId = null;
 let scenarioCache = [];
 let testsCache = [];
 let connectionLastData = null;
@@ -916,14 +918,37 @@ async function loadExecutions(workspaceId, testId) {
       meta.className = "execution-meta";
       const started = row.start_at ? new Date(row.start_at).toLocaleString() : "";
       meta.innerHTML = `<strong>${row.test_status || "unknown"}</strong><span class='muted'>${started}</span><span class='muted'>time: ${row.time_execution ?? "—"}s, failed: ${(row.failed_indexes || []).join(", ") || "—"}</span>`;
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "ghost";
-      btn.textContent = "Показать лог";
-      btn.onclick = async () => {
+      const actions = document.createElement("div");
+      actions.className = "actions wrap";
+      const viewBtn = document.createElement("button");
+      viewBtn.type = "button";
+      viewBtn.className = "ghost";
+      viewBtn.textContent = "Показать лог";
+      viewBtn.onclick = async () => {
         await loadExecutionLog(workspaceId, row.id_test_execution);
       };
-      item.append(meta, btn);
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "ghost danger";
+      deleteBtn.textContent = "Удалить лог";
+      deleteBtn.onclick = async () => {
+        const confirmed = window.confirm("Удалить этот лог из истории запусков?");
+        if (!confirmed) return;
+        try {
+          await api(`/tests/${workspaceId}/executions/log/${row.id_test_execution}`, {
+            method: "DELETE"
+          });
+          if (currentExecutionLogId === row.id_test_execution && logModal) {
+            logModal.classList.remove("active");
+            currentExecutionLogId = null;
+          }
+          await loadExecutions(workspaceId, testId);
+        } catch (err) {
+          showInfoModal(err.message || "Не удалось удалить лог");
+        }
+      };
+      actions.append(viewBtn, deleteBtn);
+      item.append(meta, actions);
       executionsList.appendChild(item);
     });
   } catch (err) {
@@ -933,6 +958,7 @@ async function loadExecutions(workspaceId, testId) {
 
 async function loadExecutionLog(workspaceId, execId) {
   if (!executionLogModal || !logModal) return;
+  currentExecutionLogId = execId;
   executionLogModal.textContent = "Загружаю лог...";
   logModal.classList.add("active");
   try {
@@ -948,10 +974,44 @@ async function loadExecutionLog(workspaceId, execId) {
 }
 
 if (logModal && logModalClose) {
-  logModalClose.onclick = () => logModal.classList.remove("active");
+  logModalClose.onclick = () => {
+    logModal.classList.remove("active");
+    currentExecutionLogId = null;
+  };
   logModal.addEventListener("click", (e) => {
-    if (e.target === logModal) logModal.classList.remove("active");
+    if (e.target === logModal) {
+      logModal.classList.remove("active");
+      currentExecutionLogId = null;
+    }
   });
+}
+
+if (deleteAllTestLogsBtn) {
+  deleteAllTestLogsBtn.onclick = async () => {
+    const { workspace, id } = getParams();
+    const workspaceId = Number(workspace);
+    const testId = Number(id);
+
+    if (!workspaceId || !testId) {
+      showInfoModal("Не переданы параметры теста");
+      return;
+    }
+
+    const confirmed = window.confirm("Удалить всю историю запусков этого теста?");
+    if (!confirmed) return;
+
+    try {
+      await api(`/tests/${workspaceId}/executions/${testId}`, {
+        method: "DELETE"
+      });
+      if (logModal) logModal.classList.remove("active");
+      currentExecutionLogId = null;
+      await loadExecutions(workspaceId, testId);
+      showInfoModal("Все логи удалены");
+    } catch (err) {
+      showInfoModal(err.message || "Не удалось удалить логи");
+    }
+  };
 }
 
 function downloadText(text, filename) {
@@ -1648,6 +1708,13 @@ async function bootstrapScenarioPage() {
 async function bootstrapScenarioCreatePage() {
   const { workspace } = getParams();
   const workspaceId = Number(workspace);
+  const defaultScenarioTemplate = JSON.stringify({
+    "Your endpoint": {
+      "PRESET": {},
+      "TESTS": {},
+      "AFTER-TEST": {}
+    }
+  }, null, 2);
   if (!workspaceId) {
     showInfoModal("Не передан workspace");
     return;
@@ -1680,6 +1747,9 @@ async function bootstrapScenarioCreatePage() {
   });
 
   editor.setSize("100%", "70vh");
+  if (!editor.getValue().trim() || editor.getValue().trim() === "{\n  \n}") {
+    editor.setValue(defaultScenarioTemplate);
+  }
 
   if (createPageValidate) {
     createPageValidate.onclick = (e) => {

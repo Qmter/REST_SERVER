@@ -42,7 +42,13 @@
           <input type="text" id="scenarioCreateName" placeholder="Например, Smoke Test" required>
 
           <label for="jsonEditor">JSON содержимое</label>
-          <textarea id="jsonEditor" spellcheck="false" wrap="off">{\n  \n}</textarea>
+          <textarea id="jsonEditor" spellcheck="false" wrap="off">{
+  "Your endpoint": {
+    "PRESET": {},
+    "TESTS": {},
+    "AFTER-TEST": {}
+  }
+}</textarea>
 
           <div class="json-status-row">
             <span id="scenarioCreateStatus" class="json-status muted">Введите JSON, проверим на лету</span>

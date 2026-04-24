@@ -12,7 +12,9 @@ from app.services.test_service import (
     generate_tests_service,
     run_test_service,
     list_test_executions_service,
-    get_test_execution_log_service
+    get_test_execution_log_service,
+    delete_test_execution_service,
+    delete_all_test_logs_service
 )
 
 from app.db.database import get_db
@@ -99,3 +101,23 @@ def get_test_execution_log(
     access=Depends(check_workspace_access_dep("read"))
 ):
     return get_test_execution_log_service(db=db, id_workspace=id_workspace, id_execution=id_execution)
+
+
+@router.delete("/{id_workspace}/executions/log/{id_execution}")
+def delete_test_execution_log(
+    id_workspace: int,
+    id_execution: int,
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("delete"))
+):
+    return delete_test_execution_service(db=db, id_workspace=id_workspace, id_execution=id_execution)
+
+
+@router.delete("/{id_workspace}/executions/{id_test}")
+def delete_all_test_logs(
+    id_workspace: int,
+    id_test: int,
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("delete"))
+):
+    return delete_all_test_logs_service(db=db, id_workspace=id_workspace, id_test=id_test)

@@ -13,7 +13,9 @@ from app.repositories.test_repo import (
     create_log_execution,
     get_test_executions_by_test,
     get_log_execution,
-    get_test_execution
+    get_test_execution,
+    delete_test_execution_with_logs,
+    delete_test_executions_with_logs_by_test
 )
 
 from app.repositories.scenario_repo import get_scenario_by_id
@@ -241,3 +243,33 @@ def get_test_execution_log_service(db, id_workspace, id_execution):
             detail = {"log": detail}
 
     return detail
+
+
+def delete_test_execution_service(db, id_workspace, id_execution):
+    exec_row = get_test_execution(db, id_execution)
+    if not exec_row:
+        raise HTTPException(404, "Execution not found")
+    if exec_row["id_workspace"] != id_workspace:
+        raise HTTPException(403, "Forbidden")
+
+    result = delete_test_execution_with_logs(db=db, id_test_execution=id_execution)
+    return {
+        "success": True,
+        "deleted_logs": result["deleted_logs"],
+        "deleted_executions": result["deleted_executions"]
+    }
+
+
+def delete_all_test_logs_service(db, id_workspace, id_test):
+    test = get_test_by_id(db, id_test)
+    if not test:
+        raise HTTPException(404, "Test not found")
+    if test["id_workspace"] != id_workspace:
+        raise HTTPException(403, "Forbidden")
+
+    result = delete_test_executions_with_logs_by_test(db=db, id_test=id_test)
+    return {
+        "success": True,
+        "deleted_logs": result["deleted_logs"],
+        "deleted_executions": result["deleted_executions"]
+    }
