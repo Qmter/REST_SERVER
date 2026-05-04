@@ -3,6 +3,7 @@ def get_tests_preview_by_workspace(db, id_workspace):
         cursor.execute(
             """
             SELECT t.id_test,
+                   t.id_scenario,
                    t.name_test,
                    te.test_status AS last_status,
                    te.start_at   AS last_start
@@ -35,6 +36,21 @@ def get_test_by_id(db, id_test):
             (id_test,)
         )
         return cursor.fetchone()
+
+
+def get_tests_by_workspace(db, id_workspace):
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT t.*, s.id_workspace
+            FROM tests t
+            JOIN scenarios s ON t.id_scenario = s.id_scenario
+            WHERE s.id_workspace = %s
+            ORDER BY t.id_test ASC
+            """,
+            (id_workspace,)
+        )
+        return cursor.fetchall()
     
 def delete_test(db, id_test):
     with db.cursor() as cursor:
@@ -121,6 +137,31 @@ def get_test_executions_by_test(db, id_test, limit=20):
             LIMIT %s
             """,
             (id_test, limit)
+        )
+        return cursor.fetchall()
+
+
+def get_test_executions_by_workspace(db, id_workspace, limit=100):
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT te.id_test_execution,
+                   te.id_test,
+                   te.id_user,
+                   te.test_status,
+                   te.failed_indexes,
+                   te.time_execution,
+                   te.start_at,
+                   t.name_test,
+                   t.id_scenario
+            FROM tests_executions te
+            JOIN tests t ON te.id_test = t.id_test
+            JOIN scenarios s ON t.id_scenario = s.id_scenario
+            WHERE s.id_workspace = %s
+            ORDER BY te.start_at DESC
+            LIMIT %s
+            """,
+            (id_workspace, limit)
         )
         return cursor.fetchall()
 

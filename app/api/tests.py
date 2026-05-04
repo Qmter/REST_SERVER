@@ -11,6 +11,9 @@ from app.services.test_service import (
     delete_test_service,
     generate_tests_service,
     run_test_service,
+    run_all_tests_service,
+    list_active_test_runs_service,
+    list_workspace_test_executions_service,
     list_test_executions_service,
     get_test_execution_log_service,
     delete_test_execution_service,
@@ -81,6 +84,37 @@ def run_test(
         id_test=id_test,
         id_user=user["id_user"]
     )
+
+
+@router.post("/{id_workspace}/run-all")
+def run_all_tests(
+    id_workspace: int,
+    user=Depends(get_current_user),
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("write"))
+):
+    return run_all_tests_service(
+        db=db,
+        id_workspace=id_workspace,
+        id_user=user["id_user"]
+    )
+
+
+@router.get("/{id_workspace}/runs/active")
+def list_active_test_runs(
+    id_workspace: int,
+    access=Depends(check_workspace_access_dep("read"))
+):
+    return list_active_test_runs_service(id_workspace=id_workspace)
+
+
+@router.get("/{id_workspace}/executions")
+def list_workspace_test_executions(
+    id_workspace: int,
+    db=Depends(get_db),
+    access=Depends(check_workspace_access_dep("read"))
+):
+    return list_workspace_test_executions_service(db=db, id_workspace=id_workspace)
 
 
 @router.get("/{id_workspace}/executions/{id_test}")

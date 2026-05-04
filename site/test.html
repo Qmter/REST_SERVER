@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Тест</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.css" />
 </head>
 <body>
   <div class="layout">
@@ -67,7 +68,7 @@
   <div id="logModal" class="modal-overlay" aria-hidden="true">
     <div class="modal" style="max-width: 920px;">
       <h3>Лог выполнения</h3>
-      <pre id="executionLogModal" class="code-block" style="max-height:60vh; overflow:auto;"></pre>
+      <div id="executionLogModal" class="log-view" style="max-height:60vh; overflow:auto;"></div>
       <div class="actions" style="justify-content: flex-end;">
         <button type="button" class="ghost" id="logDownloadBtn">Сохранить лог</button>
         <button type="button" id="logModalClose">Закрыть</button>
@@ -85,6 +86,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

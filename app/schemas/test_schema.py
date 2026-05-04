@@ -4,6 +4,7 @@ from datetime import datetime
 
 class TestPreview(BaseModel):
     id_test: int
+    id_scenario: int
     name_test: str
     last_status: str | None = None
     last_start: datetime | None = None

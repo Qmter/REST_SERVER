@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workspace</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.css">
 </head>
 <body>
   <div class="layout">
@@ -66,10 +67,12 @@
             <h1 id="workspaceTitle">Workspace</h1>
             <div class="actions">
               <button type="button" class="ghost" id="backToProjects">← К проектам</button>
+              <button type="button" class="ghost" id="workspaceLogHistoryBtn">Показать историю логов</button>
               <button type="button" class="ghost danger" id="deleteWorkspaceBtn">Удалить workspace</button>
             </div>
           </div>
           <p class="muted" id="workspaceDescription">Загружаю информацию о проекте…</p>
+          <div id="workspaceStats" class="workspace-stats" aria-live="polite"></div>
         </section>
 
         <div class="workspace-boards">
@@ -89,7 +92,7 @@
                     <option value="id-asc">Старые сверху</option>
                   </select>
                 </div>
-                <button type="button" id="generateTestsBtn" style="display:none;">Сгенерировать все</button>
+                <button type="button" id="runAllTestsBtn" style="display:none;">Запустить все тесты</button>
               </div>
             </div>
             <div id="testList" class="scenario-list"></div>
@@ -111,6 +114,7 @@
                     <option value="id-asc">Старые сверху</option>
                   </select>
                 </div>
+                <button type="button" id="generateTestsBtn" style="display:none;">Сгенерировать все тесты</button>
                 <button type="button" id="createScenarioBtn" style="display:none;">Создать сценарий</button>
               </div>
             </div>
@@ -240,6 +244,28 @@
     </div>
   </div>
 
+  <div id="workspaceLogHistoryModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal workspace-log-modal">
+      <h3>История логов workspace</h3>
+      <div id="workspaceLogHistoryList" class="scenario-list workspace-log-history"></div>
+      <div class="actions" style="justify-content: flex-end;">
+        <button type="button" id="workspaceLogHistoryClose">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="logModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" style="max-width: 920px;">
+      <h3>Лог выполнения</h3>
+      <div id="executionLogModal" class="log-view" style="max-height:60vh; overflow:auto;"></div>
+      <div class="actions" style="justify-content: flex-end;">
+        <button type="button" class="ghost" id="logDownloadBtn">Сохранить лог</button>
+        <button type="button" id="logModalClose">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
