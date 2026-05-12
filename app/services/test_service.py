@@ -354,8 +354,13 @@ def list_workspace_test_executions_service(db, id_workspace, limit=100):
                     detail = json.loads(detail)
                 except Exception:
                     detail = {}
-            r["log_name"] = detail.get("name")
-            r["is_all_tests"] = bool(detail.get("is_all_tests"))
+            if isinstance(detail, list):
+                for detail_arg in detail:
+                    r["log_name"] = detail_arg.get("name")
+                    r["is_all_tests"] = bool(detail_arg.get("is_all_tests"))
+            elif isinstance(detail, dict):
+                r["log_name"] = detail.get("name")
+                r["is_all_tests"] = bool(detail.get("is_all_tests"))
     return rows
 
 

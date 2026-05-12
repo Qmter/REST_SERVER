@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ панель</title>
+<link rel="stylesheet" href="styles.css">
+<!-- Подключаем стили simple-notify -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.css" />
+<style>
+  /* Дополнительные стили для уведомлений, если нужно переопределить тему */
+  .sn-notification.sn-success { border-left: 5px solid #22c55e; }
+  .sn-notification.sn-error { border-left: 5px solid #ef4444; }
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+<div class="sidebar">
+
+<div class="sidebar-logo">
+  <img src="img/istok_light_logo.jpg" alt="Istok">
+</div>
+
+<h2>REST Tester</h2>
+
+<div class="user-chip">
+  <img src="img/icons/user_icon.svg" alt="User" class="sidebar-icon">
+  <span id="sidebarUserName">Пользователь</span>
+</div>
+
+<ul>
+
+<li onclick="openTab('users')">
+  <img src="img/icons/user_icon.svg" alt="Пользователи" class="sidebar-icon">
+  <span>Пользователи</span>
+</li>
+
+<li onclick="openTab('workspaces')">
+  <img src="img/icons/Project_ico.svg" alt="Воркспейсы" class="sidebar-icon">
+  <span>Воркспейсы</span>
+</li>
+
+<li onclick="openTab('logs')">
+  <img src="img/icons/Logs.svg" alt="Логи" class="sidebar-icon">
+  <span>Логи</span>
+</li>
+
+<li onclick="openTab('log-executions')">
+  <img src="img/icons/Logs.svg" alt="Логи выполнений" class="sidebar-icon">
+  <span>Логи выполнений</span>
+</li>
+
+<li onclick="window.location.href='dashboard.html'">
+  <img src="img/icons/Exit.svg" alt="Назад к дашборду" class="sidebar-icon">
+  <span>Назад</span>
+</li>
+
+<li onclick="logout()">
+  <img src="img/icons/Exit.svg" alt="Выйти" class="sidebar-icon">
+  <span>Выйти</span>
+</li>
+
+</ul>
+
+<div class="theme-switcher">
+  <label for="themeSelect">Тема</label>
+  <select id="themeSelect">
+    <option value="dark">Тёмная</option>
+    <option value="light">Светлая</option>
+  </select>
+</div>
+
+<button
+  type="button"
+  class="sidebar-toggle"
+  id="sidebarToggle"
+  aria-label="Скрыть или показать меню"
+>
+  <img
+    src="img/icons/ArrowLeftOutline.svg"
+    alt=""
+    id="sidebarToggleIcon"
+    aria-hidden="true"
+  >
+</button>
+
+</div>
+
+
+<div class="content">
+
+<div id="users" class="tab active">
+  <div class="panel-header" style="margin-bottom: 20px;">
+    <h1>Пользователи</h1>
+    <button type="button" onclick="openCreateUserModal()">+ Добавить пользователя</button>
+  </div>
+  <div class="panel">
+    <div class="table-responsive">
+      <table class="data-table" id="usersTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Роль</th>
+            <th>Создан</th>
+            <th>Действия</th> <!-- Добавлено -->
+          </tr>
+        </thead>
+        <tbody id="usersTableBody">
+          <tr><td colspan="6" class="muted">Загрузка...</td></tr> <!-- Исправлено colspan -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ... остальной код без изменений ... -->
+
+<!-- Modal для создания пользователя -->
+<div id="createUserModal" class="modal-overlay">
+  <div class="modal" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3>Новый пользователь</h3>
+      <button type="button" class="modal-close" onclick="closeCreateUserModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="createUserForm" onsubmit="handleCreateUser(event)">
+        <div class="form-field" style="margin-bottom: 15px;">
+          <label for="newUsername">Username *</label>
+          <input type="text" id="newUsername" required placeholder="unique_username">
+        </div>
+        
+        <div class="form-field" style="margin-bottom: 15px;">
+          <label for="newEmail">Email *</label>
+          <input type="email" id="newEmail" required placeholder="user@example.com">
+        </div>
+
+        <div class="form-field" style="margin-bottom: 15px;">
+          <label for="newPassword">Пароль *</label>
+          <input type="password" id="newPassword" required minlength="6" placeholder="******">
+        </div>
+
+        <div class="form-field" style="margin-bottom: 20px;">
+          <label for="newRole">Роль</label>
+          <select id="newRole">
+            <option value="2">Tester</option>
+            <option value="1">Admin</option>
+          </select>
+        </div>
+
+        <div class="actions" style="justify-content: flex-end; gap: 10px;">
+          <button type="button" class="ghost" onclick="closeCreateUserModal()">Отмена</button>
+          <button type="submit" id="createUserSubmitBtn">Создать</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal для подтверждения удаления пользователя (НОВОЕ) -->
+<div id="deleteUserModal" class="modal-overlay">
+  <div class="modal" style="max-width: 400px;">
+    <div class="modal-header">
+      <h3>Подтверждение</h3>
+      <button type="button" class="modal-close" onclick="closeDeleteUserModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom: 20px; font-size: 15px;">Вы действительно хотите удалить пользователя <strong id="deleteUserNameDisplay" style="color: var(--accent);"></strong>?</p>
+      <div class="actions" style="justify-content: flex-end; gap: 10px;">
+        <button type="button" class="ghost" onclick="closeDeleteUserModal()">Отмена</button>
+        <button type="button" id="confirmDeleteBtn" class="danger">Удалить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: WORKSPACES -->
+<div id="workspaces" class="tab">
+  <h1>workspaces</h1>
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Все рабочие пространства</h2>
+    </div>
+    <div class="table-responsive">
+      <table class="data-table" id="workspacesTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Создан</th>
+          </tr>
+        </thead>
+        <tbody id="workspacesTableBody">
+          <tr><td colspan="4" class="muted">Загрузка...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: LOGS -->
+<div id="logs" class="tab">
+  <h1>Системные логи</h1>
+  <div class="panel">
+    <div class="panel-header">
+      <h2>История изменений</h2>
+      <div class="scenario-controls">
+        <label>Лимит:</label>
+        <select id="logsLimit" onchange="loadLogs()">
+          <option value="50">50</option>
+          <option value="100" selected>100</option>
+          <option value="200">200</option>
+          <option value="500">500</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="data-table" id="logsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Объект</th>
+            <th>Действие</th>
+            <th>Дата</th>
+            <th>Детали</th>
+          </tr>
+        </thead>
+        <tbody id="logsTableBody">
+          <tr><td colspan="5" class="muted">Загрузка...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: LOG EXECUTIONS -->
+<div id="log-executions" class="tab">
+  <h1>Логи выполнения тестов</h1>
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Выполнения тестов</h2>
+      <div class="scenario-controls">
+        <label>Лимит:</label>
+        <select id="logExecutionsLimit" onchange="loadLogExecutions()">
+          <option value="50">50</option>
+          <option value="100" selected>100</option>
+          <option value="200">200</option>
+          <option value="500">500</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="data-table" id="logExecutionsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ID выполнения теста</th>
+            <th>Дата</th>
+            <th>Детали</th>
+          </tr>
+        </thead>
+        <tbody id="logExecutionsTableBody">
+          <tr><td colspan="4" class="muted">Загрузка...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div>
+
+<!-- Modal для просмотра JSON/Log -->
+<div id="jsonModal" class="modal-overlay">
+  <div class="modal modal-large">
+    <div class="modal-header">
+      <h3 id="jsonModalTitle">Детали</h3>
+      <button type="button" class="modal-close" onclick="closeJsonModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="jsonModalContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal для создания пользователя -->
+<div id="createUserModal" class="modal-overlay">
+  <div class="modal" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3>Новый пользователь</h3>
+      <button type="button" class="modal-close" onclick="closeCreateUserModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="createUserForm" onsubmit="handleCreateUser(event)">
+        <div class="form-field" style="margin-bottom: 15px;">
+          <label for="newUsername">Username *</label>
+          <input type="text" id="newUsername" required placeholder="unique_username">
+        </div>
+        
+        <div class="form-field" style="margin-bottom: 15px;">
+          <label for="newEmail">Email *</label>
+          <input type="email" id="newEmail" required placeholder="user@example.com">
+        </div>
+
+        <div class="form-field" style="margin-bottom: 15px;">
+          <label for="newPassword">Пароль *</label>
+          <input type="password" id="newPassword" required minlength="6" placeholder="******">
+        </div>
+
+        <div class="form-field" style="margin-bottom: 20px;">
+          <label for="newRole">Роль</label>
+          <select id="newRole">
+            <option value="2">Tester</option>
+            <option value="1">Admin</option>
+          </select>
+        </div>
+
+        <div class="actions" style="justify-content: flex-end; gap: 10px;">
+          <button type="button" class="ghost" onclick="closeCreateUserModal()">Отмена</button>
+          <button type="submit" id="createUserSubmitBtn">Создать</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<!-- Подключаем JS simple-notify -->
+<script src="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

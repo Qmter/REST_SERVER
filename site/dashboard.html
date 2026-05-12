@@ -27,14 +27,14 @@
 
 <ul>
 
-<li onclick="openTab('tests')">
-  <img src="img/icons/Logs.svg" alt="Результаты тестов" class="sidebar-icon">
-  <span>Результаты тестов</span>
-</li>
-
 <li onclick="openTab('projects')">
   <img src="img/icons/Project_ico.svg" alt="Проекты" class="sidebar-icon">
   <span>Проекты</span>
+</li>
+
+<li id="adminPanelLink" style="display: none;" onclick="window.location.href='admin.html'">
+  <img src="img/icons/Project_ico.svg" alt="Админ панель" class="sidebar-icon">
+  <span>Админ панель</span>
 </li>
 
 <li onclick="logout()">
@@ -72,12 +72,7 @@
 
 <div class="content">
 
-<div id="tests" class="tab active">
-<h1>Запуск тестов</h1>
-<p>Здесь будет запуск сценариев тестирования REST API.</p>
-</div>
-
-<div id="projects" class="tab">
+<div id="projects" class="tab active">
 <h1>Проекты</h1>
 <div class="projects-layout">
   <section class="panel">

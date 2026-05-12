@@ -508,6 +508,12 @@ async function ensureAuth() {
     if (sidebarUserName && me?.username) {
       sidebarUserName.textContent = me.username;
     }
+
+
+    const adminPanelLink = document.getElementById("adminPanelLink");
+    if (adminPanelLink && me?.id_role === 1) {
+      adminPanelLink.style.display = "flex";
+    }
     return true;
   } catch (_) {
     redirectToLogin();
@@ -665,6 +671,8 @@ async function bootstrapWorkspacePage() {
     const workspaces = await api("/workspaces");
     const ws = workspaces.find((w) => w.id_workspace === id);
 
+    const user = await api("/users/me")
+
     if (!ws) {
       if (workspaceTitle) workspaceTitle.textContent = "Workspace не найден";
       if (connectionStatus) connectionStatus.textContent = "Workspace не найден";
@@ -676,17 +684,17 @@ async function bootstrapWorkspacePage() {
     if (connectionWorkspaceLabel) connectionWorkspaceLabel.textContent = ws.name_workspace;
     if (deleteWorkspaceBtn) deleteWorkspaceBtn.dataset.workspaceId = String(id);
     currentAccessType = (ws.name_access_type || "").toLowerCase();
-    currentIsOwner = (currentAccessType === "owner");
+    currentIsOwner = (currentAccessType === "owner" || user.id_role == 1);
     renderWorkspaceStats();
     if (createScenarioBtn) {
-      const canCreate = currentAccessType !== "viewer";
+      const canCreate = currentAccessType !== "viewer" && user.id_role == 2;
       createScenarioBtn.style.display = canCreate ? "inline-flex" : "none";
       if (canCreate) {
         createScenarioBtn.onclick = () => window.location.href = `scenario_create.html?workspace=${id}`;
       }
     }
     if (generateTestsBtn) {
-      const canGenerate = currentAccessType !== "viewer";
+      const canGenerate = currentAccessType !== "viewer" && user.id_role == 2;
       generateTestsBtn.style.display = canGenerate ? "inline-flex" : "none";
       if (canGenerate) {
         generateTestsBtn.onclick = async () => {
@@ -695,7 +703,7 @@ async function bootstrapWorkspacePage() {
       }
     }
     if (runAllTestsBtn) {
-      const canRun = currentAccessType !== "viewer";
+      const canRun = currentAccessType !== "viewer" && user.id_role == 2;
       runAllTestsBtn.style.display = canRun ? "inline-flex" : "none";
       if (canRun) {
         runAllTestsBtn.onclick = async () => {
@@ -710,7 +718,7 @@ async function bootstrapWorkspacePage() {
       };
     }
     // UI ограничения для viewer
-    if (currentAccessType === "viewer") {
+    if (currentAccessType === "viewer" && user.id_role == 2) {
       if (deleteWorkspaceBtn) deleteWorkspaceBtn.style.display = "none";
       if (connectionPanel) connectionPanel.style.display = "none";
       if (membersPanel) membersPanel.style.display = "none";

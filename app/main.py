@@ -7,6 +7,8 @@ from app.api import workspaces
 from app.api import connections
 from app.api import scenarios
 from app.api import tests
+from app.api import admin
+
 
 from app.core.config import settings
 
@@ -16,10 +18,16 @@ app = FastAPI(
 )
 
 app.add_middleware(CORSMiddleware, 
-                   allow_origins=["http://localhost:5500", "http://127.0.0.1:5500"], 
+                   allow_origins=["*"], 
                    allow_credentials=True, 
                    allow_methods=["*"], 
                    allow_headers=["*"])
+
+app.include_router(
+    admin.router,
+    prefix="/admin",
+    tags=["admin"]
+)
 
 
 

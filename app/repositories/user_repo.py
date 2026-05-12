@@ -40,7 +40,7 @@ def get_user_by_id(db, id_user: int):
     with db.cursor() as cursor:
 
         cursor.execute(
-            "SELECT id_user, username, email FROM users WHERE id_user=%s",
+            "SELECT id_user, username, email, id_role FROM users WHERE id_user=%s",
             (id_user,)
         )
 
@@ -61,3 +61,27 @@ def create_user(db, username, email, password_hash, id_role):
 
         db.commit()
         return cursor.lastrowid
+
+
+def delete_user(db, user_id: int) -> bool:
+    """
+    Удаляет пользователя по ID.
+    Возвращает True, если пользователь был найден и удален, иначе False.
+    """
+    user = get_user_by_id(db, user_id)
+    if not user:
+        return False
+    
+    try:
+        with db.cursor() as cursor:
+
+            cursor.execute(
+                """
+                DELETE FROM users WHERE id_user = %s
+                """, 
+                (user_id,))
+        db.commit()
+        return True
+    except Exception as e:
+        db.rollback()
+        raise e

@@ -24,6 +24,10 @@ def check_workspace_access_dep(required: str):
         print("ACCESS")
         print("USER:", user)
         print("WORKSPACE:", id_workspace)
+
+        if user["id_role"] == 1:
+            return True
+        
         with db.cursor() as cursor:
             cursor.execute(
                 """

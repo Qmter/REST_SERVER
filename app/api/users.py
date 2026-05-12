@@ -17,4 +17,5 @@ def get_users(db = Depends(get_db)):
 
 @router.get("/me", description="Security endpoint used access-token")
 def get_me(user = Depends(get_current_user)):
-    return user
+   # Добавляем id_role в ответ для проверки на фронтенде
+    return {**user, "id_role": user.get("id_role")}
