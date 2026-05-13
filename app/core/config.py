@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     SECRET_KEY: str
 
+    INTEGRATION_HOST: str
+
     class Config:
         env_file = ".env"
 

@@ -1970,3 +1970,31 @@ body.theme-dark pre::-webkit-scrollbar-thumb {
   font-size: 14px;
   background: var(--editor-bg);
 }
+
+.login-container .btn-integration {
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  background: #2563eb;
+  border: none;
+  color: white;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: block;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.login-container .btn-integration:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+body.theme-dark .login-container .btn-integration {
+  background: #3b82f6;
+}
+
+body.theme-dark .login-container .btn-integration:hover {
+  background: #2563eb;
+}

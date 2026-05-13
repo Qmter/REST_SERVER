@@ -4,48 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>REST API Test System - Login</title>
-<link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="login-body">
 
 <div class="login-container">
 
-<img
-  src="img/istok_logo.jpg"
-  alt="Istok"
-  class="login-logo"
->
+  <img src="img/istok_logo.jpg" alt="Istok" class="login-logo">
 
-<form id="loginForm">
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="Имя пользователя" required>
+    <input type="password" id="password" placeholder="Пароль" required>
+    <button type="submit">Войти</button>
+  </form>
 
-<input
-type="text"
-id="username"
-placeholder="Имя пользователя"
-required
->
-
-<input
-type="password"
-id="password"
-placeholder="Пароль"
-required
->
-
-<button type="submit">
-Войти
-</button>
-
-</form>
-
-<div id="error" class="error"></div>
+  <button type="button" id="integrationRegisterBtn" class="btn-integration">
+    Зарегистрироваться через ISTOK.MES
+  </button>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/simple-notify/dist/simple-notify.min.js"></script>
-<script src="app.js"></script>
+<script src="app.js" defer></script>
 
 </body>
 </html>

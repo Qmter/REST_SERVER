@@ -1,4 +1,4 @@
-const API_BASE = localStorage.getItem("apiBase") || "http://localhost:8000";
+const API_BASE = localStorage.getItem("apiBase") || "http://127.0.0.1:8000";
 
 const themeSelect = document.getElementById("themeSelect");
 const loginForm = document.getElementById("loginForm");
@@ -182,6 +182,10 @@ function inferNotifyStatus(text) {
     || value.startsWith("не найден")
     || value.startsWith("некоррект")
     || value.startsWith("неверный")
+    || value.startsWith("invalid")
+    || value.startsWith("not found")
+    || value.startsWith("user not found")
+    || value.startsWith("forbidden")
   ) {
     return "error";
   }
@@ -189,6 +193,7 @@ function inferNotifyStatus(text) {
     value.startsWith("сохранено")
     || value.startsWith("обновлено")
     || value.startsWith("удалено")
+    || value.startsWith("успешно")
     || value.startsWith("подключение установлено")
     || value.startsWith("тест сгенерирован")
     || value.startsWith("сгенерированы")
@@ -475,23 +480,62 @@ async function api(path, options = {}) {
 }
 
 if (loginForm) {
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (loginError) loginError.textContent = "";
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!username || !password) {
+        showInfoModal("Введите имя пользователя и пароль");
+        return;
+      }
+
+      try {
+        const { access_token } = await api("/auth/login", {
+          method: "POST",
+          body: JSON.stringify({ username, password })
+        });
+
+        saveToken(access_token);
+
+        showInfoModal("Вы успешно вошли в систему");
+
+        setTimeout(() => window.location.href = "dashboard.html", 1000);
+
+      } catch (err) {
+        showInfoModal(err.message || "Не удалось войти");
+      }
+    });
+  }
+
+const integrationRegisterBtn = document.getElementById("integrationRegisterBtn");
+if (integrationRegisterBtn) {
+  integrationRegisterBtn.addEventListener("click", async () => {
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
 
+    if (!username || !password) {
+      showInfoModal("Введите имя пользователя и пароль для регистрации через ISTOK.MES");
+      return;
+    }
+
     try {
-      const { access_token } = await api("/auth/login", {
+      setButtonLoading(integrationRegisterBtn, true, "Регистрация через ISTOK.MES");
+
+      await api("/auth/register/integration", {
         method: "POST",
         body: JSON.stringify({ username, password })
       });
 
-      saveToken(access_token);
-      window.location.href = "dashboard.html";
+      showInfoModal("Регистрация через ISTOK.MES прошла успешно. Теперь вы можете войти.");
+
+      setTimeout(() => window.location.reload(), 1500);
+
     } catch (err) {
-      if (loginError) loginError.textContent = err.message;
+      showInfoModal(err.message || "Не удалось зарегистрироваться через ISTOK.MES");
+    } finally {
+      setButtonLoading(integrationRegisterBtn, false);
     }
   });
 }

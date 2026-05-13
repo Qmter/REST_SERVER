@@ -10,7 +10,8 @@ from app.schemas.auth_schema import (
 
 from app.services.auth_service import (
     register_user,
-    login_user
+    login_user,
+    integration_register_service
 )
 
 
@@ -41,3 +42,11 @@ def login(data: LoginRequest, db = Depends(get_db)):
     )
 
     return {"access_token": token}
+
+@router.post('/register/integration', description="Register integration")
+def register_integration(data: LoginRequest, db = Depends(get_db)):
+    return integration_register_service(
+        db=db,
+        username=data.username,
+        password=data.password
+        )

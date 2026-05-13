@@ -134,16 +134,19 @@ pip install -r requirements.txt
 Файл `.env`:
 
 ```env
-PROJECT_NAME=REST API Tester
+PROJECT_NAME=REST API Testing Platform
 
 DB_HOST=localhost
 DB_PORT=3306
-DB_USER=user
-DB_PASSWORD=password
-DB_NAME=database
+DB_USER=root
+DB_PASSWORD=root
+DB_NAME=restapi_test_platform
 
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-SECRET_KEY=super-secret-key
+SECRET_KEY=supersecret
+
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+INTEGRATION_HOST = http://1.1.1.1:3000
 ```
 
 ---
