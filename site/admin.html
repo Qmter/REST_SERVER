@@ -11,6 +11,48 @@
   /* Дополнительные стили для уведомлений, если нужно переопределить тему */
   .sn-notification.sn-success { border-left: 5px solid #22c55e; }
   .sn-notification.sn-error { border-left: 5px solid #ef4444; }
+  .stats-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    padding: 18px;
+    border-radius: 16px;
+    background: #1f2937;
+    box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  }
+  .stat-card h3 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: #9ca3af;
+  }
+  .stat-card .stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+  .statistics-charts {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+  .chart-card {
+    padding: 20px;
+    border-radius: 16px;
+    background: #111827;
+    box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  }
+  .chart-card h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    color: #f8fafc;
+  }
+  .chart-card canvas {
+    width: 100% !important;
+    height: 320px !important;
+  }
 </style>
 </head>
 
@@ -41,6 +83,11 @@
 <li onclick="openTab('workspaces')">
   <img src="img/icons/Project_ico.svg" alt="Проекты" class="sidebar-icon">
   <span>Проекты</span>
+</li>
+
+<li onclick="openTab('statistics')">
+  <img src="img/icons/Stats.svg" alt="Статистика" class="sidebar-icon">
+  <span>Статистика</span>
 </li>
 
 <li onclick="openTab('logs')">
@@ -272,6 +319,46 @@
   </div>
 </div>
 
+<div id="statistics" class="tab">
+  <h1>Статистика</h1>
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Общая статистика</h2>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Всего тестов</h3>
+        <div class="stat-value" id="statTotalTests">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Всего сценариев</h3>
+        <div class="stat-value" id="statTotalScenarios">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Выполнений тестов</h3>
+        <div class="stat-value" id="statTotalExecutions">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Пройдено / не пройдено</h3>
+        <div class="stat-value" id="statPassedFailedText">0 / 0</div>
+      </div>
+    </div>
+
+    <div class="statistics-charts">
+      <div class="chart-card">
+        <h2>Результаты тестов</h2>
+        <canvas id="statusChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h2>Тесты и сценарии</h2>
+        <canvas id="objectsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 </div>
 
 </div>
@@ -330,6 +417,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="app.js"></script>
 <!-- Подключаем JS simple-notify -->
 <script src="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.js"></script>

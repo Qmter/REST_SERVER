@@ -6,6 +6,7 @@ from app.schemas.admin_schema import (
     AdminWorkspaceResponse,
     AdminLogResponse,
     AdminLogExecutionResponse,
+    AdminStatisticsResponse,
     UserDeleteResponse,
     MessageResponse
 )
@@ -14,6 +15,7 @@ from app.services.admin_service import (
     list_all_workspaces_service,
     list_all_logs_service,
     list_all_log_executions_service,
+    get_admin_statistics_service,
     remove_user
 )
 from app.core.dependencies import get_current_user
@@ -76,3 +78,11 @@ def get_log_executions(
     admin=Depends(require_admin)
 ):
     return list_all_log_executions_service(db=db, limit=limit, offset=offset)
+
+
+@router.get("/statistics", response_model=AdminStatisticsResponse, description="Get admin statistics (admin only)")
+def get_statistics(
+    db=Depends(get_db),
+    admin=Depends(require_admin)
+):
+    return get_admin_statistics_service(db=db)

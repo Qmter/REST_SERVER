@@ -108,7 +108,10 @@ async function ensureAdminAuth() {
   }
 }
 
-function openTab(tabName) {
+let statisticsStatusChart = null;
+let statisticsObjectsChart = null;
+
+async function openTab(tabName) {
   const tabs = document.querySelectorAll(".tab");
   tabs.forEach(tab => tab.classList.remove("active"));
 
@@ -116,11 +119,122 @@ function openTab(tabName) {
   if (activeTab) {
     activeTab.classList.add("active");
   }
-  
+
   if(tabName === 'users') loadUsers();
   if(tabName === 'workspaces') loadWorkspaces();
+  if(tabName === 'statistics') loadStatistics();
   if(tabName === 'logs') loadLogs();
   if(tabName === 'log-executions') loadLogExecutions();
+}
+
+async function loadStatistics() {
+  const totalTestsEl = document.getElementById("statTotalTests");
+  const totalScenariosEl = document.getElementById("statTotalScenarios");
+  const totalExecutionsEl = document.getElementById("statTotalExecutions");
+  const passedFailedText = document.getElementById("statPassedFailedText");
+  const statusCanvas = document.getElementById("statusChart");
+  const objectsCanvas = document.getElementById("objectsChart");
+
+  if (totalTestsEl) totalTestsEl.textContent = "Загрузка...";
+  if (totalScenariosEl) totalScenariosEl.textContent = "Загрузка...";
+  if (totalExecutionsEl) totalExecutionsEl.textContent = "Загрузка...";
+  if (passedFailedText) passedFailedText.textContent = "Загрузка...";
+
+  try {
+    const stats = await api("/admin/statistics");
+
+    const totalTests = stats.total_tests ?? 0;
+    const totalScenarios = stats.total_scenarios ?? 0;
+    const totalExecutions = stats.total_test_executions ?? 0;
+    const passedTests = stats.passed_tests ?? 0;
+    const failedTests = stats.failed_tests ?? 0;
+
+    if (totalTestsEl) totalTestsEl.textContent = totalTests;
+    if (totalScenariosEl) totalScenariosEl.textContent = totalScenarios;
+    if (totalExecutionsEl) totalExecutionsEl.textContent = totalExecutions;
+    if (passedFailedText) passedFailedText.textContent = `${passedTests} / ${failedTests}`;
+
+    if (window.Chart) {
+      if (statisticsStatusChart) statisticsStatusChart.destroy();
+      if (statisticsObjectsChart) statisticsObjectsChart.destroy();
+
+      if (statusCanvas) {
+        statisticsStatusChart = new Chart(statusCanvas, {
+          type: "doughnut",
+          data: {
+            labels: ["Пройдено", "Не пройдено"],
+            datasets: [{
+              data: [passedTests, failedTests],
+              backgroundColor: ["#22c55e", "#ef4444"],
+              borderColor: ["#111827", "#111827"],
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: "#f8fafc" }
+              },
+              tooltip: {
+                callbacks: {
+                  label: ctx => `${ctx.label}: ${ctx.parsed} (${Math.round(ctx.raw / Math.max(1, passedTests + failedTests) * 100)}%)`
+                }
+              }
+            }
+          }
+        });
+      }
+
+      if (objectsCanvas) {
+        statisticsObjectsChart = new Chart(objectsCanvas, {
+          type: "bar",
+          data: {
+            labels: ["Тесты", "Сценарии", "Выполнения"],
+            datasets: [{
+              label: "Количество",
+              data: [totalTests, totalScenarios, totalExecutions],
+              backgroundColor: ["#3b82f6", "#f59e0b", "#10b981"],
+              borderRadius: 8,
+              borderSkipped: false
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: "#f8fafc" }, grid: { display: false } },
+              y: { ticks: { color: "#f8fafc" }, grid: { color: "rgba(148,163,184,0.2)" }, beginAtZero: true }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}` } }
+            }
+          }
+        });
+      }
+    }
+  } catch (err) {
+    if (totalTestsEl) totalTestsEl.textContent = "-";
+    if (totalScenariosEl) totalScenariosEl.textContent = "-";
+    if (totalExecutionsEl) totalExecutionsEl.textContent = "-";
+    if (passedFailedText) passedFailedText.textContent = "-";
+
+    new Notify({
+      status: "error",
+      title: "Ошибка статистики",
+      text: err.message,
+      effect: "fade",
+      speed: 300,
+      showIcon: true,
+      showCloseButton: true,
+      autoclose: false,
+      autotimeout: 0,
+      type: "outline",
+      position: "right top"
+    });
+  }
 }
 
 async function loadUsers() {

@@ -34,6 +34,14 @@ class AdminLogExecutionResponse(BaseModel):
     detail: Optional[str]
     created_at: datetime
 
+
+class AdminStatisticsResponse(BaseModel):
+    total_tests: int
+    total_scenarios: int
+    total_test_executions: int
+    passed_tests: int
+    failed_tests: int
+
 class MessageResponse(BaseModel):
     message: str
 

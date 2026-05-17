@@ -2,7 +2,8 @@ from app.repositories.admin_repo import (
     get_all_users,
     get_all_workspaces,
     get_all_logs,
-    get_all_log_executions
+    get_all_log_executions,
+    get_admin_statistics
 )
 
 from app.repositories.user_repo import get_user_by_id, delete_user
@@ -44,3 +45,23 @@ def remove_user(db, user_id: int):
         )
     
     return {"id_user": user_id, "message": "Пользователь успешно удален"}
+
+
+def get_admin_statistics_service(db):
+    stats = get_admin_statistics(db=db)
+    if not stats:
+        return {
+            "total_tests": 0,
+            "total_scenarios": 0,
+            "total_test_executions": 0,
+            "passed_tests": 0,
+            "failed_tests": 0
+        }
+
+    return {
+        "total_tests": stats.get("total_tests", 0) or 0,
+        "total_scenarios": stats.get("total_scenarios", 0) or 0,
+        "total_test_executions": stats.get("total_test_executions", 0) or 0,
+        "passed_tests": stats.get("passed_tests", 0) or 0,
+        "failed_tests": stats.get("failed_tests", 0) or 0
+    }

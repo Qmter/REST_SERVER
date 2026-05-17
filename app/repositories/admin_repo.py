@@ -48,3 +48,18 @@ def get_all_log_executions(db, limit: int = 100, offset: int = 0):
             (limit, offset)
         )
         return cursor.fetchall()
+
+
+def get_admin_statistics(db):
+    with db.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT
+                (SELECT COUNT(*) FROM tests) AS total_tests,
+                (SELECT COUNT(*) FROM scenarios) AS total_scenarios,
+                (SELECT COUNT(*) FROM tests_executions) AS total_test_executions,
+                (SELECT SUM(CASE WHEN LOWER(test_status) IN ('PASS') THEN 1 ELSE 0 END) FROM tests_executions) AS passed_tests,
+                (SELECT SUM(CASE WHEN LOWER(test_status) IN ('FAIL') THEN 1 ELSE 0 END) FROM tests_executions) AS failed_tests
+            """
+        )
+        return cursor.fetchone()
