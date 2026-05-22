@@ -254,12 +254,22 @@ async function loadUsers() {
       const row = document.createElement("tr");
       const roleName = ROLE_NAMES[user.id_role] || `Role ${user.id_role}`;
       const createdAt = user.created_at ? new Date(user.created_at).toLocaleString("ru-RU") : "-";
-      
-      // Кнопка удаления (не показываем для себя или если нужна защита, добавьте условие)
+
+      // Кнопка редактирования
+      const editBtn = `
+        <button type="button" class="tab-btn"
+            style="color: #3b82f6; border-color: #3b82f6; padding: 4px 8px; font-size: 12px; margin-right: 5px;"
+            onclick="openEditUserModal(${user.id_user}, '${escapeHtml(user.username).replace(/\'/g, "\\\'")}', '${escapeHtml(user.email || "").replace(/\'/g, "\\\'")}', ${user.id_role})"
+            title="Редактировать пользователя">
+            Редактировать
+        </button>
+      `;
+
+      // Кнопка удаления
       const deleteBtn = `
-        <button type="button" class="tab-btn" 
+        <button type="button" class="tab-btn"
             style="color: #ef4444; border-color: #ef4444; padding: 4px 8px; font-size: 12px;"
-            onclick="openDeleteUserModal(${user.id_user}, '${escapeHtml(user.username).replace(/'/g, "\\'")}')"
+            onclick="openDeleteUserModal(${user.id_user}, '${escapeHtml(user.username).replace(/\'/g, "\\\'")}')"
             title="Удалить пользователя">
             Удалить
         </button>
@@ -271,7 +281,7 @@ async function loadUsers() {
         <td>${escapeHtml(user.email || "-")}</td>
         <td><span class="pill">${escapeHtml(roleName)}</span></td>
         <td>${createdAt}</td>
-        <td>${deleteBtn}</td>
+        <td>${editBtn}${deleteBtn}</td>
       `;
       usersTableBody.appendChild(row);
     });
@@ -360,10 +370,10 @@ async function loadLogs() {
       let detailsBtn = "";
       if (log.old_value || log.new_value) {
         // Для системных логов передаем тип 'system'
-        const detailData = { 
+        const detailData = {
             type: 'system',
-            old_value: log.old_value, 
-            new_value: log.new_value 
+            old_value: log.old_value,
+            new_value: log.new_value
         };
         const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(detailData))));
         detailsBtn = `<button type="button" class="tab-btn" onclick="showJsonDecoded('${encodedData}')">Посмотреть</button>`;
@@ -419,9 +429,9 @@ async function loadLogExecutions() {
       let detailsBtn = "";
       if (log.detail) {
         // Для логов выполнений передаем тип 'execution' и сырой detail
-        const detailData = { 
+        const detailData = {
             type: 'execution',
-            detail: log.detail 
+            detail: log.detail
         };
         const encodedData = btoa(unescape(encodeURIComponent(JSON.stringify(detailData))));
         detailsBtn = `<button type="button" class="tab-btn" onclick="showJsonDecoded('${encodedData}')">Посмотреть</button>`;
@@ -616,7 +626,7 @@ function renderLog(container, log) {
       } catch (e) {
         pre.textContent = contentText;
       }
-      
+
       blockWrap.append(label, pre);
       appendToCurrent(blockWrap);
       return;
@@ -688,7 +698,7 @@ function renderJsonModalContent(data) {
     // 1. ОБРАБОТКА ЛОГОВ ВЫПОЛНЕНИЯ (EXECUTION LOGS)
     if (data.type === 'execution' && data.detail) {
         let logContent = null;
-        
+
         // Пробуем распарсить detail как JSON строку
         try {
             const parsedDetail = JSON.parse(data.detail);
@@ -708,16 +718,16 @@ function renderJsonModalContent(data) {
             const wrapper = document.createElement("div");
             wrapper.className = "log-entry-block";
             wrapper.style.marginBottom = "0";
-            
+
             const label = document.createElement("strong");
             label.className = "log-key-label";
             label.textContent = "LOG EXECUTION:";
             label.style.display = "block";
             label.style.marginBottom = "10px";
-            
+
             const logContainer = document.createElement("div");
             logContainer.className = "log-view";
-            
+
             wrapper.appendChild(label);
             wrapper.appendChild(logContainer);
             container.appendChild(wrapper);
@@ -740,17 +750,17 @@ function renderJsonModalContent(data) {
             if (val === null && field.key === 'old_value') {
                  // Можно пропустить или показать null
             }
-            
+
             const block = document.createElement("div");
             block.className = "log-entry-block";
-            
+
             const label = document.createElement("strong");
             label.className = "log-key-label";
             label.textContent = field.label + ":";
             block.appendChild(label);
 
             const parsed = parseLogValue(val);
-            
+
             if (parsed === null) {
                 const span = document.createElement("span");
                 span.className = "null";
@@ -784,21 +794,21 @@ function renderJsonModalContent(data) {
 
 function showJsonDecoded(encodedString) {
     if (!jsonModal || !jsonModalContent) return;
-    
+
     try {
         const jsonString = decodeURIComponent(escape(atob(encodedString)));
         const data = JSON.parse(jsonString);
-        
+
         // Очищаем и рендерим
         jsonModalContent.innerHTML = renderJsonModalContent(data);
-        
+
         if(jsonModalTitle) {
             jsonModalTitle.textContent = data.type === 'execution' ? "Лог выполнения" : "Детали записи";
         }
 
         jsonModal.style.display = "flex";
-        jsonModal.classList.add("active"); 
-        
+        jsonModal.classList.add("active");
+
         const modalContainer = jsonModal.querySelector('.modal');
         if(modalContainer) {
             modalContainer.classList.add('modal-large');
@@ -862,10 +872,10 @@ function closeCreateUserModal() {
 
 async function handleCreateUser(event) {
     event.preventDefault();
-    
+
     const btn = document.getElementById("createUserSubmitBtn");
     const prevText = btn.textContent;
-    
+
     const username = document.getElementById("newUsername").value.trim();
     const email = document.getElementById("newEmail").value.trim();
     const password = document.getElementById("newPassword").value;
@@ -963,7 +973,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!isAuth) return;
 
     loadUsers();
-    
+
     const themeSelect = document.getElementById("themeSelect");
     if (themeSelect) {
         const savedTheme = localStorage.getItem("theme") || "dark";
@@ -976,7 +986,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             localStorage.setItem("theme", theme);
         });
     }
-    
+
     window.addEventListener("click", (e) => {
         // Закрытие модальных окон при клике вне их
         if (e.target === jsonModal) {
@@ -996,7 +1006,7 @@ function openDeleteUserModal(userId, username) {
     userIdToDelete = userId;
     const nameDisplay = document.getElementById("deleteUserNameDisplay");
     if(nameDisplay) nameDisplay.textContent = username;
-    
+
     const modal = document.getElementById("deleteUserModal");
     if(modal) {
         modal.style.display = "flex";
@@ -1018,7 +1028,7 @@ async function confirmDeleteUser() {
 
     const btn = document.getElementById("confirmDeleteBtn");
     const prevText = btn.textContent;
-    
+
     btn.disabled = true;
     btn.textContent = "Удаление...";
 
@@ -1071,3 +1081,127 @@ const confirmBtn = document.getElementById("confirmDeleteBtn");
 if(confirmBtn) {
     confirmBtn.onclick = confirmDeleteUser;
 }
+// --- ФУНКЦИИ РЕДАКТИРОВАНИЯ ПОЛЬЗОВАТЕЛЯ ---
+
+let currentEditUserId = null;
+
+function openEditUserModal(userId, username, email, roleId) {
+    currentEditUserId = userId;
+
+    document.getElementById("editUserId").value = userId;
+    document.getElementById("editUsername").value = username;
+    document.getElementById("editEmail").value = email || "";
+    document.getElementById("editPassword").value = "";
+    document.getElementById("editRole").value = roleId.toString();
+
+    const modal = document.getElementById("editUserModal");
+    if(modal) {
+        modal.style.display = "flex";
+        modal.classList.add("active");
+    }
+}
+
+function closeEditUserModal() {
+    currentEditUserId = null;
+    const modal = document.getElementById("editUserModal");
+    if(modal) {
+        modal.style.display = "none";
+        modal.classList.remove("active");
+    }
+}
+
+async function handleEditUser(event) {
+    event.preventDefault();
+
+    const btn = document.getElementById("editUserSubmitBtn");
+    const prevText = btn.textContent;
+
+    const userId = parseInt(document.getElementById("editUserId").value);
+    const username = document.getElementById("editUsername").value.trim();
+    const email = document.getElementById("editEmail").value.trim();
+    const password = document.getElementById("editPassword").value;
+    const role = parseInt(document.getElementById("editRole").value);
+
+    if(!username || !email) {
+        new Notify({
+            status: 'warning',
+            title: 'Внимание',
+            text: 'Заполните все обязательные поля',
+            effect: 'fade',
+            speed: 300,
+            showIcon: true,
+            showCloseButton: true,
+            autoclose: true,
+            autotimeout: 4000,
+            type: 'outline',
+            position: 'right top'
+        });
+        return;
+    }
+
+    // Блокируем кнопку
+    btn.disabled = true;
+    btn.textContent = "Сохранение...";
+
+    try {
+        const updateData = {
+            username: username,
+            email: email,
+            id_role: role
+        };
+
+        // Добавляем пароль только если он был введен
+        if(password && password.length > 0) {
+            updateData.password = password;
+        }
+
+        await api(`/admin/users/${userId}`, {
+            method: "PATCH",
+            body: JSON.stringify(updateData)
+        });
+
+        new Notify({
+            status: 'success',
+            title: 'Успешно',
+            text: `Пользователь ${username} обновлен`,
+            effect: 'fade',
+            speed: 300,
+            showIcon: true,
+            showCloseButton: true,
+            autoclose: true,
+            autotimeout: 3000,
+            type: 'outline',
+            position: 'right top'
+        });
+
+        closeEditUserModal();
+        loadUsers(); // Обновляем таблицу
+
+    } catch (err) {
+        new Notify({
+            status: 'error',
+            title: 'Ошибка обновления',
+            text: err.message,
+            effect: 'fade',
+            speed: 300,
+            showIcon: true,
+            showCloseButton: true,
+            autoclose: false,
+            autotimeout: 0,
+            type: 'outline',
+            position: 'right top'
+        });
+    } finally {
+        btn.disabled = false;
+        btn.textContent = prevText;
+    }
+}
+
+// Обработчик клика вне модального окна редактирования
+document.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener("click", (e) => {
+        if (e.target === document.getElementById("editUserModal")) {
+            closeEditUserModal();
+        }
+    });
+});

@@ -48,3 +48,9 @@ class MessageResponse(BaseModel):
 class UserDeleteResponse(BaseModel):
     id_user: int
     message: str
+
+class UserUpdateRequest(BaseModel):
+    username: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+    id_role: Optional[int] = None

@@ -8,7 +8,8 @@ from app.schemas.admin_schema import (
     AdminLogExecutionResponse,
     AdminStatisticsResponse,
     UserDeleteResponse,
-    MessageResponse
+    MessageResponse,
+    UserUpdateRequest
 )
 from app.services.admin_service import (
     list_all_users_service,
@@ -16,7 +17,8 @@ from app.services.admin_service import (
     list_all_logs_service,
     list_all_log_executions_service,
     get_admin_statistics_service,
-    remove_user
+    remove_user,
+    update_user_service
 )
 from app.core.dependencies import get_current_user
 from app.db.database import get_db
@@ -35,7 +37,7 @@ def require_admin(user=Depends(get_current_user)):
 
 @router.delete("/users/{user_id}", response_model=UserDeleteResponse)
 def delete_user_endpoint(
-    user_id: int, 
+    user_id: int,
     db=Depends(get_db),
     admin=Depends(require_admin),
     cur_user=Depends(get_current_user)
@@ -86,3 +88,25 @@ def get_statistics(
     admin=Depends(require_admin)
 ):
     return get_admin_statistics_service(db=db)
+
+
+@router.patch("/users/{user_id}", response_model=MessageResponse, description="Update user (admin only)")
+def update_user_endpoint(
+    user_id: int,
+    data: UserUpdateRequest,
+    db=Depends(get_db),
+    admin=Depends(require_admin)
+):
+    # Админ не может изменить роль самого себя на non-admin
+    cur_user = admin
+    if user_id == cur_user['id_user'] and data.id_role is not None and data.id_role != 1:
+        raise HTTPException(403, "Нельзя снять админскую роль с себя")
+
+    return update_user_service(
+        db=db,
+        user_id=user_id,
+        username=data.username,
+        email=data.email,
+        password=data.password,
+        id_role=data.id_role
+    )

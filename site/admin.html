@@ -39,7 +39,7 @@
 </li>
 
 <li onclick="openTab('statistics')">
-  <img src="img/icons/Stats.svg" alt="Статистика" class="sidebar-icon">
+  <img src="img/icons/statistic.svg" alt="Статистика" class="sidebar-icon">
   <span>Статистика</span>
 </li>
 
@@ -133,7 +133,7 @@
           <label for="newUsername">Username *</label>
           <input type="text" id="newUsername" required placeholder="unique_username">
         </div>
-        
+
         <div class="form-field" style="margin-bottom: 15px;">
           <label for="newEmail">Email *</label>
           <input type="email" id="newEmail" required placeholder="user@example.com">
@@ -174,6 +174,49 @@
         <button type="button" class="ghost" onclick="closeDeleteUserModal()">Отмена</button>
         <button type="button" id="confirmDeleteBtn" class="danger">Удалить</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal для редактирования пользователя -->
+<div id="editUserModal" class="modal-overlay">
+  <div class="modal" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3>Редактировать пользователя</h3>
+      <button type="button" class="modal-close" onclick="closeEditUserModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="editUserForm" onsubmit="handleEditUser(event)">
+        <input type="hidden" id="editUserId">
+
+        <div class="form-field" style="margin-bottom: 15px;">
+          <label for="editUsername">Username *</label>
+          <input type="text" id="editUsername" required placeholder="unique_username">
+        </div>
+
+        <div class="form-field" style="margin-bottom: 15px;">
+          <label for="editEmail">Email *</label>
+          <input type="email" id="editEmail" required placeholder="user@example.com">
+        </div>
+
+        <div class="form-field" style="margin-bottom: 15px;">
+          <label for="editPassword">Пароль (оставьте пустым, чтобы не менять)</label>
+          <input type="password" id="editPassword" minlength="6" placeholder="******">
+        </div>
+
+        <div class="form-field" style="margin-bottom: 20px;">
+          <label for="editRole">Роль</label>
+          <select id="editRole">
+            <option value="2">Tester</option>
+            <option value="1">Admin</option>
+          </select>
+        </div>
+
+        <div class="actions" style="justify-content: flex-end; gap: 10px;">
+          <button type="button" class="ghost" onclick="closeEditUserModal()">Отмена</button>
+          <button type="submit" id="editUserSubmitBtn">Сохранить</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -342,7 +385,7 @@
           <label for="newUsername">Username *</label>
           <input type="text" id="newUsername" required placeholder="unique_username">
         </div>
-        
+
         <div class="form-field" style="margin-bottom: 15px;">
           <label for="newEmail">Email *</label>
           <input type="email" id="newEmail" required placeholder="user@example.com">
