@@ -1,0 +1,259 @@
+{
+  "1": {
+    "description": "Getting list from non-existing relay",
+    "1.1": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/list",
+      "arguments": {
+        "relay_name": "NoRelayExists"
+      },
+      "validation": null,
+      "errCode": 10,
+      "httpCode": 400
+    }
+  },
+  "2": {
+    "description": "Getting empty list from relay",
+    "2.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.2": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/list",
+      "arguments": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD"
+      },
+      "validation": [],
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "3": {
+    "description": "Getting filled list from relay",
+    "3.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.2": {
+      "type": "POST",
+      "endpoint": "/interfaces/bonding/add",
+      "schema": {
+        "ifname": "bond0"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.3": {
+      "type": "POST",
+      "endpoint": "/interfaces/bridge/add",
+      "schema": {
+        "ifname": "br0"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.4": {
+      "type": "POST",
+      "endpoint": "/interfaces/vlan/add",
+      "schema": {
+        "ifname": "vlan311",
+        "vid": 3434
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.5": {
+      "type": "POST",
+      "endpoint": "/interfaces/eth_vlan/add",
+      "schema": {
+        "ifname": "eth1.457",
+        "vid": 3434
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.6": {
+      "type": "POST",
+      "endpoint": "/interfaces/loopback/add",
+      "schema": {
+        "ifname": "lo0"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.7": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD",
+        "interface_name": "bond0"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.8": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD",
+        "interface_name": "br0"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.9": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD",
+        "interface_name": "vlan311"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.10": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD",
+        "interface_name": "eth1.457"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.11": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD",
+        "interface_name": "eth2"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.12": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD",
+        "interface_name": "lo0"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.13": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD",
+        "interface_name": "switchport7"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.14": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/list",
+      "arguments": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD"
+      },
+      "validation": [
+        "bond0",
+        "br0",
+        "vlan311",
+        "eth1.457",
+        "eth2",
+        "lo0",
+        "switchport7"
+      ],
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "Zvk,~04c7:+8rn&nh9);wCah=]t%fh:WV-26#7F1,T#<(4B}J-qt{pD"
+      }
+    },
+    "2": {
+      "type": "POST",
+      "endpoint": "/interfaces/bonding/delete",
+      "schema": {
+        "ifname": "bond0"
+      }
+    },
+    "3": {
+      "type": "POST",
+      "endpoint": "/interfaces/bridge/delete",
+      "schema": {
+        "ifname": "br0"
+      }
+    },
+    "4": {
+      "type": "POST",
+      "endpoint": "/interfaces/vlan/delete",
+      "schema": {
+        "ifname": "vlan311"
+      }
+    },
+    "5": {
+      "type": "POST",
+      "endpoint": "/interfaces/eth_vlan/delete",
+      "schema": {
+        "ifname": "eth1.457"
+      }
+    },
+    "6": {
+      "type": "POST",
+      "endpoint": "/interfaces/switchport/vlandb",
+      "schema": {
+        "action": "delete",
+        "vlan": "3434"
+      }
+    },
+    "7": {
+      "type": "POST",
+      "endpoint": "/interfaces/loopback/delete",
+      "schema": {
+        "ifname": "lo0"
+      }
+    },
+    "8": {
+      "type": "POST",
+      "endpoint": "/interfaces/common/reset_interface",
+      "schema": {
+        "ifname": "eth2"
+      }
+    },
+    "9": {
+      "type": "POST",
+      "endpoint": "/interfaces/common/reset_interface",
+      "schema": {
+        "ifname": "switchport7"
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "1": {
+    "description": "Get LLDP interfaces",
+    "1.1": {
+      "type": "GET",
+      "endpoint": "/lldp/interfaces",
+      "arguments": {},
+      "validation": [
+        "eth1",
+        "eth2",
+        "switchport1",
+        "switchport2",
+        "switchport3",
+        "switchport4",
+        "switchport5",
+        "switchport6",
+        "switchport7",
+        "switchport8"
+      ],
+      "errCode": 0,
+      "httpCode": 200
+    }
+  }
+}

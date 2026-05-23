@@ -1,0 +1,115 @@
+{
+  "1": {
+    "description": "Adding server to non-existing relay",
+    "1.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/servers/add",
+      "schema": {
+        "relay_name": "NoRelayExist",
+        "ip_address": "14.7.57.193"
+      },
+      "errCode": -1,
+      "httpCode": 500
+    }
+  },
+  "2": {
+    "description": "Adding server",
+    "2.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "A7A*pFK^:a*!5EcR*Ckfu%<Mm4v{TM6[O"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/servers/add",
+      "schema": {
+        "relay_name": "A7A*pFK^:a*!5EcR*Ckfu%<Mm4v{TM6[O",
+        "ip_address": "7.135.251.3"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.3": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/servers/list",
+      "arguments": {
+        "relay_name": "A7A*pFK^:a*!5EcR*Ckfu%<Mm4v{TM6[O"
+      },
+      "validation": [
+        "7.135.251.3"
+      ],
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.4": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "A7A*pFK^:a*!5EcR*Ckfu%<Mm4v{TM6[O"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "3": {
+    "description": "Adding duplicate server",
+    "3.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": ":zo[_fUdq=MWSMEz"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/servers/add",
+      "schema": {
+        "relay_name": ":zo[_fUdq=MWSMEz",
+        "ip_address": "8.4.29.69"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/servers/add",
+      "schema": {
+        "relay_name": ":zo[_fUdq=MWSMEz",
+        "ip_address": "8.4.29.69"
+      },
+      "errCode": -1,
+      "httpCode": 500
+    },
+    "3.4": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": ":zo[_fUdq=MWSMEz"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "A7A*pFK^:a*!5EcR*Ckfu%<Mm4v{TM6[O"
+      }
+    },
+    "2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": ":zo[_fUdq=MWSMEz"
+      }
+    }
+  }
+}

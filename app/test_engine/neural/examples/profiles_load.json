@@ -1,0 +1,73 @@
+{
+  "1": {
+    "description": "Get loading operation withot load profile",
+    "1.1": {
+      "type": "GET",
+      "endpoint": "/profiles/load",
+      "arguments": {},
+      "errCode": [
+        0,
+        21
+      ],
+      "httpCode": [
+        200,
+        202
+      ]
+    }
+  },
+  "2": {
+    "description": "Load non exist profile",
+    "2.1": {
+      "type": "POST",
+      "endpoint": "/profiles/load",
+      "schema": {
+        "profile_name": "non_exist_profile"
+      },
+      "errCode": 9,
+      "httpCode": 400
+    }
+  },
+  "3": {
+    "description": "Load exist profile",
+    "3.1": {
+      "type": "POST",
+      "endpoint": "/profiles/profile",
+      "schema": {
+        "config_name": "i9TKTqNX1kayQuEC"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.2": {
+      "type": "POST",
+      "endpoint": "/profiles/load",
+      "schema": {
+        "profile_name": "i9TKTqNX1kayQuEC"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.3": {
+      "type": "GET",
+      "endpoint": "/profiles/load",
+      "arguments": {},
+      "errCode": [
+        0,
+        21
+      ],
+      "httpCode": [
+        200,
+        202
+      ]
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/profiles/profile/delete",
+      "schema": {
+        "config_name": "i9TKTqNX1kayQuEC"
+      }
+    }
+  }
+}

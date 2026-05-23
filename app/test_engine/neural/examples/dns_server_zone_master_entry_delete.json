@@ -1,0 +1,336 @@
+{
+  "PRESET": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/add",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u"
+      }
+    }
+  },
+  "1": {
+    "description": "Deleting A record from the master zone",
+    "1.1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/add",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry": {
+          "entry_name": "14g**ZMA>{yWx}X4qJ5'qHe9UyUdc'+,'EAYru'A(=Md1g[1bAvv7a}RgK9",
+          "entry_params": {
+            "entry_type": "a",
+            "ip_address": "234.254.206.63"
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "1.2": {
+      "type": "GET",
+      "endpoint": "/dns/server/zone/master",
+      "arguments": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u"
+      },
+      "validation": {
+        "records": [
+          {
+            "entry_name": "14g**ZMA>{yWx}X4qJ5'qHe9UyUdc'+,'EAYru'A(=Md1g[1bAvv7a}RgK9",
+            "entry_params": {
+              "entry_type": "a",
+              "ip_address": "234.254.206.63"
+            }
+          }
+        ]
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "1.3": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/delete",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry_name": "14g**ZMA>{yWx}X4qJ5'qHe9UyUdc'+,'EAYru'A(=Md1g[1bAvv7a}RgK9",
+        "entry_type": "a"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "1.4": {
+      "type": "GET",
+      "endpoint": "/dns/server/zone/master",
+      "arguments": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u"
+      },
+      "validation": {
+        "records": []
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "2": {
+    "description": "Deleting AAAA record from the master zone",
+    "2.1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/add",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry": {
+          "entry_name": "s",
+          "entry_params": {
+            "entry_type": "aaaa",
+            "ip_address": "dc70::35:3e0d"
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.2": {
+      "type": "GET",
+      "endpoint": "/dns/server/zone/master",
+      "arguments": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u"
+      },
+      "validation": {
+        "records": [
+          {
+            "entry_name": "s",
+            "entry_params": {
+              "entry_type": "aaaa",
+              "ip_address": "dc70::35:3e0d"
+            }
+          }
+        ]
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.3": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/delete",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry_name": "s",
+        "entry_type": "aaaa"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.4": {
+      "type": "GET",
+      "endpoint": "/dns/server/zone/master",
+      "arguments": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u"
+      },
+      "validation": {
+        "records": []
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "3": {
+    "description": "Deleting NS record from the master zone",
+    "3.1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/add",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry": {
+          "entry_name": "D[`OtbA_}9G-elvN^]AsRI!OO.)=G<dcQ&HhL9]TnzwPGOt'i*]K:SgJg]'\".'9<U\")1dwm4t)56L/a'=mstO",
+          "entry_params": {
+            "entry_type": "ns"
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.2": {
+      "type": "GET",
+      "endpoint": "/dns/server/zone/master",
+      "arguments": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u"
+      },
+      "validation": {
+        "records": [
+          {
+            "entry_name": "D[`OtbA_}9G-elvN^]AsRI!OO.)=G<dcQ&HhL9]TnzwPGOt'i*]K:SgJg]'\".'9<U\")1dwm4t)56L/a'=mstO",
+            "entry_params": {
+              "entry_type": "ns"
+            }
+          }
+        ]
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.3": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/delete",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry_name": "D[`OtbA_}9G-elvN^]AsRI!OO.)=G<dcQ&HhL9]TnzwPGOt'i*]K:SgJg]'\".'9<U\")1dwm4t)56L/a'=mstO",
+        "entry_type": "ns"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.4": {
+      "type": "GET",
+      "endpoint": "/dns/server/zone/master",
+      "arguments": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u"
+      },
+      "validation": {
+        "records": []
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "4": {
+    "description": "Deleting MX record from the master zone",
+    "4.1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/add",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry": {
+          "entry_name": "XGc~eB_bEJYjG'r7w-C>9124)XlsO`JYo2`x\"e4\"$_EUN!XD(}$j~4:[#{*`M",
+          "entry_params": {
+            "entry_type": "mx",
+            "priority": 3049275247
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.2": {
+      "type": "GET",
+      "endpoint": "/dns/server/zone/master",
+      "arguments": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u"
+      },
+      "validation": {
+        "records": [
+          {
+            "entry_name": "XGc~eB_bEJYjG'r7w-C>9124)XlsO`JYo2`x\"e4\"$_EUN!XD(}$j~4:[#{*`M",
+            "entry_params": {
+              "entry_type": "mx",
+              "priority": 3049275247
+            }
+          }
+        ]
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.3": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/delete",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry_name": "XGc~eB_bEJYjG'r7w-C>9124)XlsO`JYo2`x\"e4\"$_EUN!XD(}$j~4:[#{*`M",
+        "entry_type": "mx"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.4": {
+      "type": "GET",
+      "endpoint": "/dns/server/zone/master",
+      "arguments": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u"
+      },
+      "validation": {
+        "records": []
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "5": {
+    "description": "Deleting non-existing A record from the master zone",
+    "5.1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/delete",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry_name": "No_Entry",
+        "entry_type": "a"
+      },
+      "errCode": -1,
+      "httpCode": 500
+    }
+  },
+  "6": {
+    "description": "Deleting non-existing AAAA record from the master zone",
+    "6.1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/delete",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry_name": "No_Entry",
+        "entry_type": "aaaa"
+      },
+      "errCode": -1,
+      "httpCode": 500
+    }
+  },
+  "7": {
+    "description": "Deleting non-existing NS record from the master zone",
+    "7.1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/delete",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry_name": "No_Entry",
+        "entry_type": "ns"
+      },
+      "errCode": -1,
+      "httpCode": 500
+    }
+  },
+  "8": {
+    "description": "Deleting non-existing MX record from the master zone",
+    "8.1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/delete",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry_name": "No_Entry",
+        "entry_type": "mx"
+      },
+      "errCode": -1,
+      "httpCode": 500
+    }
+  },
+  "9": {
+    "description": "Deleting non-existing Type record from the master zone",
+    "9.1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/entry/delete",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u",
+        "entry_name": "No_Entry",
+        "entry_type": "no_type"
+      },
+      "errCode": 15,
+      "httpCode": 400
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/dns/server/zone/master/delete",
+      "schema": {
+        "zone_name": "yMI+(^\"/ff6h%]P3I6pl'9Z_dDJE1/pk2f-0,!E:pKo]4=cJ.FvVfZe6kJ2k4CF[u"
+      }
+    }
+  }
+}

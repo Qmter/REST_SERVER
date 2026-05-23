@@ -1,0 +1,152 @@
+{
+  "1": {
+    "description": "Export from and to non exist profiles",
+    "1.1": {
+      "type": "POST",
+      "endpoint": "/profiles/export",
+      "schema": {
+        "module_name": "mstp",
+        "profile_from": {
+          "profile_name": "y1eZ1fv5iHu5_ae:PN7g1ykqbZ1OaBbamypzMJxm8YkcJ5"
+        },
+        "profile_to": "3rSotJcffAHOUf:63"
+      },
+      "errCode": 9,
+      "httpCode": 400
+    }
+  },
+  "2": {
+    "description": "Export with correct module",
+    "2.1": {
+      "type": "POST",
+      "endpoint": "/profiles/profile",
+      "schema": {
+        "config_name": "i9TKTqNX1kayQuEC"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.2": {
+      "type": "POST",
+      "endpoint": "/profiles/profile",
+      "schema": {
+        "config_name": "xoecyxp9Ahc2mHiCjMS3xh-7fmYzHT8vAhuuRGp4wb80NTXGtb6kQf"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.3": {
+      "type": "GET",
+      "endpoint": "/profiles/list",
+      "arguments": {},
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.4": {
+      "type": "POST",
+      "endpoint": "/profiles/export",
+      "schema": {
+        "module_name": "vlan",
+        "profile_from": {
+          "profile_name": "xoecyxp9Ahc2mHiCjMS3xh-7fmYzHT8vAhuuRGp4wb80NTXGtb6kQf"
+        },
+        "profile_to": "i9TKTqNX1kayQuEC"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.5": {
+      "type": "POST",
+      "endpoint": "/profiles/profile/delete",
+      "schema": {
+        "config_name": "i9TKTqNX1kayQuEC"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.6": {
+      "type": "POST",
+      "endpoint": "/profiles/profile/delete",
+      "schema": {
+        "config_name": "xoecyxp9Ahc2mHiCjMS3xh-7fmYzHT8vAhuuRGp4wb80NTXGtb6kQf"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "3": {
+    "description": "Export with incorrect module",
+    "3.1": {
+      "type": "POST",
+      "endpoint": "/profiles/profile",
+      "schema": {
+        "config_name": "i9TKTqNX1kayQuEC"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.2": {
+      "type": "POST",
+      "endpoint": "/profiles/profile",
+      "schema": {
+        "config_name": "xoecyxp9Ahc2mHiCjMS3xh-7fmYzHT8vAhuuRGp4wb80NTXGtb6kQf"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.3": {
+      "type": "GET",
+      "endpoint": "/profiles/list",
+      "arguments": {},
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.4": {
+      "type": "POST",
+      "endpoint": "/profiles/export",
+      "schema": {
+        "module_name": "fwefwefwio",
+        "profile_from": {
+          "profile_name": "xoecyxp9Ahc2mHiCjMS3xh-7fmYzHT8vAhuuRGp4wb80NTXGtb6kQf"
+        },
+        "profile_to": "i9TKTqNX1kayQuEC"
+      },
+      "errCode": 9,
+      "httpCode": 400
+    },
+    "3.5": {
+      "type": "POST",
+      "endpoint": "/profiles/profile/delete",
+      "schema": {
+        "config_name": "i9TKTqNX1kayQuEC"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.6": {
+      "type": "POST",
+      "endpoint": "/profiles/profile/delete",
+      "schema": {
+        "config_name": "xoecyxp9Ahc2mHiCjMS3xh-7fmYzHT8vAhuuRGp4wb80NTXGtb6kQf"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/profiles/profile/delete",
+      "schema": {
+        "config_name": "xoecyxp9Ahc2mHiCjMS3xh-7fmYzHT8vAhuuRGp4wb80NTXGtb6kQf"
+      }
+    },
+    "2": {
+      "type": "POST",
+      "endpoint": "/profiles/profile/delete",
+      "schema": {
+        "config_name": "i9TKTqNX1kayQuEC"
+      }
+    }
+  }
+}

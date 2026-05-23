@@ -1,0 +1,62 @@
+{
+  "1": {
+    "description": "Getting non-existing relay",
+    "1.1": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay",
+      "arguments": {
+        "relay_name": "Non_existing_relay"
+      },
+      "errCode": 10,
+      "httpCode": 400
+    }
+  },
+  "2": {
+    "description": "Getting relay",
+    "2.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "(I6dYB:{xN`ZRqPq9)/t~fk9}*!_e9NVUmrE$x+yd3$Qj:z&Wmh!ilc"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.2": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay",
+      "arguments": {
+        "relay_name": "(I6dYB:{xN`ZRqPq9)/t~fk9}*!_e9NVUmrE$x+yd3$Qj:z&Wmh!ilc"
+      },
+      "validation": {
+        "settings": {
+          "append_agent_option": false,
+          "on": false,
+          "manage_agent_option": null,
+          "option_82": null,
+          "vrf": null
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "(I6dYB:{xN`ZRqPq9)/t~fk9}*!_e9NVUmrE$x+yd3$Qj:z&Wmh!ilc"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "(I6dYB:{xN`ZRqPq9)/t~fk9}*!_e9NVUmrE$x+yd3$Qj:z&Wmh!ilc"
+      }
+    }
+  }
+}

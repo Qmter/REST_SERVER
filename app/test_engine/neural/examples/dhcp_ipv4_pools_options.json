@@ -1,0 +1,322 @@
+{
+  "PRESET": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/add",
+      "schema": {
+        "pool_number": 55341,
+        "network": "8.213.131.0/24"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "1": {
+    "description": "Getting option",
+    "1.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/options/add",
+      "schema": {
+        "pool_number": 55341,
+        "option": {
+          "name": "bootfile-name",
+          "parameters": {
+            "bootfile_name": " s4/@X_N  XI/YK@0&&[84}tL>9(w))][{!Y(nh<d2$<CRLQY99"
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "1.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/options/delete",
+      "schema": {
+        "pool_number": 55341,
+        "option": "bootfile-name"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "2": {
+    "description": "Geting option from group",
+    "2.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/groups/add",
+      "schema": {
+        "pool_number": 55341,
+        "group_name": ".hFQ1QKmh9ZKOwMiSZ0faN7"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/options/add",
+      "schema": {
+        "pool_number": 55341,
+        "group_name": ".hFQ1QKmh9ZKOwMiSZ0faN7",
+        "option": {
+          "name": "bootfile-name",
+          "parameters": {
+            "bootfile_name": ",II,8Wo^nD.UXO_BLDZmxp{9GEwU3].$JXI{:}>.!E-B}I=OGm-G }3'-}0qMF1W>T<R&t7yl!2"
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.3": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/pools/options",
+      "arguments": {
+        "pool_number": 55341,
+        "group_name": ".hFQ1QKmh9ZKOwMiSZ0faN7",
+        "option_name": "bootfile-name"
+      },
+      "validation": {
+        "option": {
+          "name": "bootfile-name",
+          "parameters": {
+            "bootfile_name": ",II,8Wo^nD.UXO_BLDZmxp{9GEwU3].$JXI{:}>.!E-B}I=OGm-G }3'-}0qMF1W>T<R&t7yl!2"
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.4": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/groups/delete",
+      "schema": {
+        "pool_number": 55341,
+        "group_name": ".hFQ1QKmh9ZKOwMiSZ0faN7"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "3": {
+    "description": "Getting option from host",
+    "3.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/hosts",
+      "schema": {
+        "pool_number": 55341,
+        "host_name": "ZV0I06DRAXO-6o4g",
+        "hw_client_id": {
+          "mac_address": "010101010101"
+        },
+        "ip_address": null
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/options/add",
+      "schema": {
+        "pool_number": 55341,
+        "host_name": "ZV0I06DRAXO-6o4g",
+        "option": {
+          "name": "bootfile-name",
+          "parameters": {
+            "bootfile_name": "Glfs![fv31At44u BE*I!h%<1$NlqU8VULiU2>)df4pPIg#9%Sj~3hb[NdB~FQpG[{gF(p4} R7<1)o1*rE3kTC`!r>=8noZgC,K"
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.3": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/pools/options",
+      "arguments": {
+        "pool_number": 55341,
+        "host_name": "ZV0I06DRAXO-6o4g",
+        "option_name": "bootfile-name"
+      },
+      "validation": {
+        "option": {
+          "name": "bootfile-name",
+          "parameters": {
+            "bootfile_name": "Glfs![fv31At44u BE*I!h%<1$NlqU8VULiU2>)df4pPIg#9%Sj~3hb[NdB~FQpG[{gF(p4} R7<1)o1*rE3kTC`!r>=8noZgC,K"
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.4": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/hosts/delete",
+      "schema": {
+        "pool_number": 55341,
+        "host_name": "ZV0I06DRAXO-6o4g"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "4": {
+    "description": "Getting option from host in group",
+    "4.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/groups/add",
+      "schema": {
+        "pool_number": 55341,
+        "group_name": "Qn0GWj.F_2mDgfuWxW4ruuuup"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/hosts",
+      "schema": {
+        "pool_number": 55341,
+        "group_name": "Qn0GWj.F_2mDgfuWxW4ruuuup",
+        "host_name": "IAyD4d-3xlyfp7C7mMB4",
+        "hw_client_id": {
+          "mac_address": "010101010101"
+        },
+        "ip_address": null
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/options/add",
+      "schema": {
+        "pool_number": 55341,
+        "host_name": "IAyD4d-3xlyfp7C7mMB4",
+        "group_name": "Qn0GWj.F_2mDgfuWxW4ruuuup",
+        "option": {
+          "name": "bootfile-name",
+          "parameters": {
+            "bootfile_name": "0DFf]F~G2-*ADHRnc!9j8R~}98TZ&8l<Oc0SiS Es2AW,(Glm1H+u,2yM,FbYba<M!)PTvB3OiCq141Yu{cN:-a;L'sB6#)5@4*{"
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.4": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/pools/options",
+      "arguments": {
+        "pool_number": 55341,
+        "host_name": "IAyD4d-3xlyfp7C7mMB4",
+        "group_name": "Qn0GWj.F_2mDgfuWxW4ruuuup",
+        "option_name": "bootfile-name"
+      },
+      "validation": {
+        "option": {
+          "name": "bootfile-name",
+          "parameters": {
+            "bootfile_name": "0DFf]F~G2-*ADHRnc!9j8R~}98TZ&8l<Oc0SiS Es2AW,(Glm1H+u,2yM,FbYba<M!)PTvB3OiCq141Yu{cN:-a;L'sB6#)5@4*{"
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.5": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/groups/delete",
+      "schema": {
+        "pool_number": 55341,
+        "group_name": "Qn0GWj.F_2mDgfuWxW4ruuuup"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "5": {
+    "description": "Getting option from non-existing pool",
+    "5.1": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/pools/options",
+      "arguments": {
+        "pool_number": 13538,
+        "option_name": "bootfile-name"
+      },
+      "validation": null,
+      "errCode": 10,
+      "httpCode": 400
+    }
+  },
+  "6": {
+    "description": "Getting option grom non-existing group",
+    "6.1": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/pools/options",
+      "arguments": {
+        "pool_number": 55341,
+        "group_name": "not_created_group",
+        "option_name": "bootfile-name"
+      },
+      "validation": null,
+      "errCode": 10,
+      "httpCode": 400
+    }
+  },
+  "7": {
+    "description": "Getting option from non-existing host",
+    "7.1": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/pools/options",
+      "arguments": {
+        "pool_number": 55341,
+        "host_name": "not_created_host",
+        "option_name": "bootfile-name"
+      },
+      "validation": null,
+      "errCode": 10,
+      "httpCode": 400
+    }
+  },
+  "8": {
+    "description": "Getting option from non-existing host in non-existing group",
+    "8.1": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/pools/options",
+      "arguments": {
+        "pool_number": 55341,
+        "host_name": "not_created_host",
+        "group_name": "not_created_group",
+        "option_name": "bootfile-name"
+      },
+      "validation": null,
+      "errCode": 10,
+      "httpCode": 400
+    }
+  },
+  "9": {
+    "description": "Getting not created option",
+    "9.1": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/pools/options",
+      "arguments": {
+        "pool_number": 55341,
+        "option_name": "bootfile-name"
+      },
+      "validation": null,
+      "errCode": 10,
+      "httpCode": 400
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/pools/delete",
+      "schema": {
+        "pool_number": 55341
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  }
+}

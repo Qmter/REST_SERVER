@@ -1,0 +1,473 @@
+{
+  "1": {
+    "description": "Adding non-existing interface",
+    "1.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "(BN1+V$0txDsvozo-d4!~QR-{,@cn-xOa#.`ut7j1Zu[Y$6Uw#W@A*k"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "1.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "(BN1+V$0txDsvozo-d4!~QR-{,@cn-xOa#.`ut7j1Zu[Y$6Uw#W@A*k",
+        "interface_name": "br101"
+      },
+      "errCode": -1,
+      "httpCode": 500
+    }
+  },
+  "2": {
+    "description": "Adding bonding-interface on relay",
+    "2.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": ">FpQH)Y/a+VG0uhJu@H`~u^z7Y%(aiph_l_;#f1ckY3:9;/H,&Eejps3^BD"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.2": {
+      "type": "POST",
+      "endpoint": "/interfaces/bonding/add",
+      "schema": {
+        "ifname": "bond8515"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": ">FpQH)Y/a+VG0uhJu@H`~u^z7Y%(aiph_l_;#f1ckY3:9;/H,&Eejps3^BD",
+        "interface_name": "bond8515"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.4": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/list",
+      "arguments": {
+        "relay_name": ">FpQH)Y/a+VG0uhJu@H`~u^z7Y%(aiph_l_;#f1ckY3:9;/H,&Eejps3^BD"
+      },
+      "validation": [
+        "bond8515"
+      ],
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "3": {
+    "description": "Adding bridge-interface on relay",
+    "3.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "]V^U@lAL5]FCX@SZ-QFNi.!~,{2J.l~iJ&YC];~L"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.2": {
+      "type": "POST",
+      "endpoint": "/interfaces/bridge/add",
+      "schema": {
+        "ifname": "br0"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "]V^U@lAL5]FCX@SZ-QFNi.!~,{2J.l~iJ&YC];~L",
+        "interface_name": "br0"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.4": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/list",
+      "arguments": {
+        "relay_name": "]V^U@lAL5]FCX@SZ-QFNi.!~,{2J.l~iJ&YC];~L"
+      },
+      "validation": [
+        "br0"
+      ],
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "4": {
+    "description": "Adding vlan-interface on relay",
+    "4.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "_Jt`Z3LHSd-1kF{=0TO_Zv<N%-&q1xc>X3`Z3PP8E4J%76r[c,}>+Rbx(f49ny"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.2": {
+      "type": "POST",
+      "endpoint": "/interfaces/vlan/add",
+      "schema": {
+        "ifname": "vlan7",
+        "vid": 3038
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "_Jt`Z3LHSd-1kF{=0TO_Zv<N%-&q1xc>X3`Z3PP8E4J%76r[c,}>+Rbx(f49ny",
+        "interface_name": "vlan7"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.4": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/list",
+      "arguments": {
+        "relay_name": "_Jt`Z3LHSd-1kF{=0TO_Zv<N%-&q1xc>X3`Z3PP8E4J%76r[c,}>+Rbx(f49ny"
+      },
+      "validation": [
+        "vlan7"
+      ],
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "5": {
+    "description": "Adding ethernet-interface on relay",
+    "5.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "@NHeop"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "5.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "@NHeop",
+        "interface_name": "eth2"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "5.3": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/list",
+      "arguments": {
+        "relay_name": "@NHeop"
+      },
+      "validation": [
+        "eth2"
+      ],
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "6": {
+    "description": "Adding eth_vlan-interface on relay",
+    "6.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "tx#z3x^.d:R(Bb/w%l@PpF.)M3>B;$>BfNX)k1P)EVn~w;W*R"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "6.2": {
+      "type": "POST",
+      "endpoint": "/interfaces/eth_vlan/add",
+      "schema": {
+        "ifname": "eth1.39",
+        "vid": 1186
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "6.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "tx#z3x^.d:R(Bb/w%l@PpF.)M3>B;$>BfNX)k1P)EVn~w;W*R",
+        "interface_name": "eth1.39"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "6.4": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/list",
+      "arguments": {
+        "relay_name": "tx#z3x^.d:R(Bb/w%l@PpF.)M3>B;$>BfNX)k1P)EVn~w;W*R"
+      },
+      "validation": [
+        "eth1.39"
+      ],
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "7": {
+    "description": "Adding loopback-interface on relay",
+    "7.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "&u:h]tpIRrj{0$@0BG-ntc88"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "7.2": {
+      "type": "POST",
+      "endpoint": "/interfaces/loopback/add",
+      "schema": {
+        "ifname": "lo0"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "7.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "&u:h]tpIRrj{0$@0BG-ntc88",
+        "interface_name": "lo0"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "7.4": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/list",
+      "arguments": {
+        "relay_name": "&u:h]tpIRrj{0$@0BG-ntc88"
+      },
+      "validation": [
+        "lo0"
+      ],
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "8": {
+    "description": "Adding switchport-interface on relay",
+    "8.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "]WS;0@,9XU>M.Yk/qFZ([-&njh)VD3s"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "8.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "]WS;0@,9XU>M.Yk/qFZ([-&njh)VD3s",
+        "interface_name": "switchport5"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "8.3": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/list",
+      "arguments": {
+        "relay_name": "]WS;0@,9XU>M.Yk/qFZ([-&njh)VD3s"
+      },
+      "validation": [
+        "switchport5"
+      ],
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "9": {
+    "description": "Adding tunnel-interface on relay | Not allowed",
+    "9.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "CF1DXO"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "9.2": {
+      "type": "POST",
+      "endpoint": "/interfaces/tunnel/add",
+      "schema": {
+        "ifname": "tunnel0",
+        "settings": {
+          "source": "250.254.41.74"
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "9.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/interfaces/add",
+      "schema": {
+        "relay_name": "CF1DXO",
+        "interface_name": "tunnel0"
+      },
+      "errCode": -1,
+      "httpCode": 500
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "(BN1+V$0txDsvozo-d4!~QR-{,@cn-xOa#.`ut7j1Zu[Y$6Uw#W@A*k"
+      }
+    },
+    "2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": ">FpQH)Y/a+VG0uhJu@H`~u^z7Y%(aiph_l_;#f1ckY3:9;/H,&Eejps3^BD"
+      }
+    },
+    "3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "]V^U@lAL5]FCX@SZ-QFNi.!~,{2J.l~iJ&YC];~L"
+      }
+    },
+    "4": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "_Jt`Z3LHSd-1kF{=0TO_Zv<N%-&q1xc>X3`Z3PP8E4J%76r[c,}>+Rbx(f49ny"
+      }
+    },
+    "5": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "@NHeop"
+      }
+    },
+    "6": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "tx#z3x^.d:R(Bb/w%l@PpF.)M3>B;$>BfNX)k1P)EVn~w;W*R"
+      }
+    },
+    "7": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "&u:h]tpIRrj{0$@0BG-ntc88"
+      }
+    },
+    "8": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "]WS;0@,9XU>M.Yk/qFZ([-&njh)VD3s"
+      }
+    },
+    "9": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "CF1DXO"
+      }
+    },
+    "10": {
+      "type": "POST",
+      "endpoint": "/interfaces/bonding/delete",
+      "schema": {
+        "ifname": "bond8515"
+      }
+    },
+    "11": {
+      "type": "POST",
+      "endpoint": "/interfaces/bridge/delete",
+      "schema": {
+        "ifname": "br0"
+      }
+    },
+    "12": {
+      "type": "POST",
+      "endpoint": "/interfaces/vlan/delete",
+      "schema": {
+        "ifname": "vlan7"
+      }
+    },
+    "13": {
+      "type": "POST",
+      "endpoint": "/interfaces/eth_vlan/delete",
+      "schema": {
+        "ifname": "eth1.39"
+      }
+    },
+    "14": {
+      "type": "POST",
+      "endpoint": "/interfaces/switchport/vlandb",
+      "schema": {
+        "action": "delete",
+        "vlan": "3038"
+      }
+    },
+    "15": {
+      "type": "POST",
+      "endpoint": "/interfaces/switchport/vlandb",
+      "schema": {
+        "action": "delete",
+        "vlan": "1186"
+      }
+    },
+    "16": {
+      "type": "POST",
+      "endpoint": "/interfaces/loopback/delete",
+      "schema": {
+        "ifname": "lo0"
+      }
+    },
+    "17": {
+      "type": "POST",
+      "endpoint": "/interfaces/tunnel/delete",
+      "schema": {
+        "ifname": "tunnel0"
+      }
+    },
+    "18": {
+      "type": "POST",
+      "endpoint": "/interfaces/common/reset_interface",
+      "schema": {
+        "ifname": "eth2"
+      }
+    }
+  }
+}

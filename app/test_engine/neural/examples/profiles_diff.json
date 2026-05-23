@@ -1,0 +1,188 @@
+{
+  "1": {
+    "description": "Difference curent and curent",
+    "1.1": {
+      "type": "POST",
+      "endpoint": "/profiles/diff",
+      "schema": {
+        "profile_1": "current",
+        "profile_2": "current"
+      },
+      "errCode": 9,
+      "httpCode": 400
+    }
+  },
+  "2": {
+    "description": "Difference curent and last_loaded",
+    "2.1": {
+      "type": "POST",
+      "endpoint": "/profiles/diff",
+      "schema": {
+        "profile_1": "current",
+        "profile_2": "last-loaded"
+      },
+      "errCode": [
+        0,
+        9,
+        21
+      ],
+      "httpCode": [
+        200,
+        400,
+        202
+      ]
+    },
+    "2.2": {
+      "type": "GET",
+      "endpoint": "/profiles/diff",
+      "arguments": {},
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "3": {
+    "description": "Difference curent and not exist profile name ",
+    "3.1": {
+      "type": "POST",
+      "endpoint": "/profiles/diff",
+      "schema": {
+        "profile_1": "current",
+        "profile_2": "not_exist_profile"
+      },
+      "errCode": 9,
+      "httpCode": 400
+    }
+  },
+  "4": {
+    "description": "Difference curent and exist profile name ",
+    "4.1": {
+      "type": "POST",
+      "endpoint": "/profiles/profile",
+      "schema": {
+        "config_name": "xoecyxp9Ahc2mHiCjMS3xh-7fmYzHT8vAhuuRGp4wb80NTXGtb6kQf"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.2": {
+      "type": "POST",
+      "endpoint": "/profiles/diff",
+      "schema": {
+        "profile_1": "current",
+        "profile_2": "xoecyxp9Ahc2mHiCjMS3xh-7fmYzHT8vAhuuRGp4wb80NTXGtb6kQf"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.3": {
+      "type": "GET",
+      "endpoint": "/profiles/diff",
+      "arguments": {},
+      "errCode": [
+        0,
+        21
+      ],
+      "httpCode": [
+        200,
+        202
+      ]
+    }
+  },
+  "5": {
+    "description": "Difference curent and not exist rollback profile name ",
+    "5.1": {
+      "type": "POST",
+      "endpoint": "/profiles/diff",
+      "schema": {
+        "profile_1": "current",
+        "profile_2": {
+          "rollback_name": "i9TKTqNX1kayQuEC"
+        }
+      },
+      "errCode": 9,
+      "httpCode": 400
+    }
+  },
+  "6": {
+    "description": "Difference curent, exist profile name and vlan module",
+    "6.1": {
+      "type": "POST",
+      "endpoint": "/profiles/profile",
+      "schema": {
+        "config_name": "3wAWLbrtIQRVlRefIutLUYqLo9EgNwjMZQM"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "6.2": {
+      "type": "POST",
+      "endpoint": "/profiles/diff",
+      "schema": {
+        "profile_1": "current",
+        "profile_2": "3wAWLbrtIQRVlRefIutLUYqLo9EgNwjMZQM",
+        "module_name": "vlan"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "6.3": {
+      "type": "GET",
+      "endpoint": "/profiles/diff",
+      "arguments": {},
+      "errCode": [
+        0,
+        21
+      ],
+      "httpCode": [
+        200,
+        202
+      ]
+    }
+  },
+  "7": {
+    "description": "Difference curent, exist profile name and bad module",
+    "7.1": {
+      "type": "POST",
+      "endpoint": "/profiles/profile",
+      "schema": {
+        "config_name": "g98RRp9"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "7.2": {
+      "type": "POST",
+      "endpoint": "/profiles/diff",
+      "schema": {
+        "profile_1": "current",
+        "profile_2": "g98RRp9",
+        "module_name": "sefewefqqwd"
+      },
+      "errCode": 9,
+      "httpCode": 400
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/profiles/profile/delete",
+      "schema": {
+        "config_name": "xoecyxp9Ahc2mHiCjMS3xh-7fmYzHT8vAhuuRGp4wb80NTXGtb6kQf"
+      }
+    },
+    "2": {
+      "type": "POST",
+      "endpoint": "/profiles/profile/delete",
+      "schema": {
+        "config_name": "3wAWLbrtIQRVlRefIutLUYqLo9EgNwjMZQM"
+      }
+    },
+    "3": {
+      "type": "POST",
+      "endpoint": "/profiles/profile/delete",
+      "schema": {
+        "config_name": "g98RRp9"
+      }
+    }
+  }
+}

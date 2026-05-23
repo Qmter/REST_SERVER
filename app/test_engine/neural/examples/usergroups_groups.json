@@ -1,0 +1,12 @@
+{
+  "1": {
+    "description": "Get user groups",
+    "1.1": {
+      "type": "GET",
+      "endpoint": "/usergroups/groups",
+      "arguments": {},
+      "errCode": 0,
+      "httpCode": 200
+    }
+  }
+}

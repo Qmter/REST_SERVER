@@ -1,0 +1,12 @@
+{
+  "1": {
+    "description": "Get system config",
+    "1.1": {
+      "type": "GET",
+      "endpoint": "/profiles/system_config",
+      "arguments": {},
+      "errCode": 0,
+      "httpCode": 200
+    }
+  }
+}

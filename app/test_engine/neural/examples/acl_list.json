@@ -1,0 +1,382 @@
+{
+  "1": {
+    "description": "Getting empty list | ipv4 & ipv6 ACLs",
+    "1.1": {
+      "type": "GET",
+      "endpoint": "/acl/list",
+      "validation": {
+        "ipv4": [],
+        "ipv6": []
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "2": {
+    "description": "Getting empty ipv4 list",
+    "2.1": {
+      "type": "GET",
+      "endpoint": "/acl/list",
+      "arguments": {
+        "proto": "ipv4"
+      },
+      "validation": {
+        "ipv4": []
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "3": {
+    "description": "Getting empty ipv6 list",
+    "3.1": {
+      "type": "GET",
+      "endpoint": "/acl/list",
+      "arguments": {
+        "proto": "ipv6"
+      },
+      "validation": {
+        "ipv6": []
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "4": {
+    "description": "Getting filled ipv4 list",
+    "4.1": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv4",
+      "schema": {
+        "action": {
+          "add": {
+            "acl_name": "0;oPA_TjImhWFgMg[eyD1(v[ZrV~t[mn=8NiBI:5PHBkJT#U,89Vfws7x4b(QcJ<=A_OjB&GBVQi1B%M:J^0=)b&$7$R8LP~sJ",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "webex"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.2": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv4",
+      "schema": {
+        "action": {
+          "add": {
+            "acl_name": "rSXR<Qr3lC5bWq%;hCc9Lzm<w8}_%UV7f]>}4E2V{H[(4o)ND1rZ-GN71)G3JE}R1]7$GIiHq]Q{e[Ps4ZzjKn$HFYo^[3pPm",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "hotspotshield"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.3": {
+      "type": "GET",
+      "endpoint": "/acl/list",
+      "arguments": {
+        "proto": "ipv4"
+      },
+      "validation": {
+        "ipv4": [
+          "0;oPA_TjImhWFgMg[eyD1(v[ZrV~t[mn=8NiBI:5PHBkJT#U,89Vfws7x4b(QcJ<=A_OjB&GBVQi1B%M:J^0=)b&$7$R8LP~sJ",
+          "rSXR<Qr3lC5bWq%;hCc9Lzm<w8}_%UV7f]>}4E2V{H[(4o)ND1rZ-GN71)G3JE}R1]7$GIiHq]Q{e[Ps4ZzjKn$HFYo^[3pPm"
+        ]
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.4": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv4",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "0;oPA_TjImhWFgMg[eyD1(v[ZrV~t[mn=8NiBI:5PHBkJT#U,89Vfws7x4b(QcJ<=A_OjB&GBVQi1B%M:J^0=)b&$7$R8LP~sJ",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "webex"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "4.5": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv4",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "rSXR<Qr3lC5bWq%;hCc9Lzm<w8}_%UV7f]>}4E2V{H[(4o)ND1rZ-GN71)G3JE}R1]7$GIiHq]Q{e[Ps4ZzjKn$HFYo^[3pPm",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "hotspotshield"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "5": {
+    "description": "Getting filled ipv6 list",
+    "5.1": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv6",
+      "schema": {
+        "action": {
+          "add": {
+            "acl_name": "rHquu@lyG^:#!k~rdxAv+m0LyXt",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "teamspeak"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "5.2": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv6",
+      "schema": {
+        "action": {
+          "add": {
+            "acl_name": "k<VoQCgbIm8Mqm%NeSv0;+<,^7Vub4Nc.qx;RTx;Lo2csPucl_t1,R9wvYa",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "iec60870"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "5.3": {
+      "type": "GET",
+      "endpoint": "/acl/list",
+      "arguments": {
+        "proto": "ipv6"
+      },
+      "validation": {
+        "ipv6": [
+          "rHquu@lyG^:#!k~rdxAv+m0LyXt",
+          "k<VoQCgbIm8Mqm%NeSv0;+<,^7Vub4Nc.qx;RTx;Lo2csPucl_t1,R9wvYa"
+        ]
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "5.4": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv6",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "rHquu@lyG^:#!k~rdxAv+m0LyXt",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "teamspeak"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "5.5": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv6",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "k<VoQCgbIm8Mqm%NeSv0;+<,^7Vub4Nc.qx;RTx;Lo2csPucl_t1,R9wvYa",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "iec60870"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "6": {
+    "description": "Getting filled lists | ipv4 & ipv6 ACLs",
+    "6.1": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv4",
+      "schema": {
+        "action": {
+          "add": {
+            "acl_name": "t<SkTq;=,Wk,ql8[7G1+pjC6$[~3U<]Cc}yg+5+zK}XC]ooirPt=*xo1+9z`NnED!i.%&kgX>V@EJ@eRo>",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "teamspeak"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "6.2": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv6",
+      "schema": {
+        "action": {
+          "add": {
+            "acl_name": "uh&*3BS&}Ibav!5ZjTVj",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "eaq"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "6.3": {
+      "type": "GET",
+      "endpoint": "/acl/list",
+      "validation": {
+        "ipv4": [
+          "t<SkTq;=,Wk,ql8[7G1+pjC6$[~3U<]Cc}yg+5+zK}XC]ooirPt=*xo1+9z`NnED!i.%&kgX>V@EJ@eRo>"
+        ],
+        "ipv6": [
+          "uh&*3BS&}Ibav!5ZjTVj"
+        ]
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "6.4": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv4",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "t<SkTq;=,Wk,ql8[7G1+pjC6$[~3U<]Cc}yg+5+zK}XC]ooirPt=*xo1+9z`NnED!i.%&kgX>V@EJ@eRo>",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "teamspeak"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "6.5": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv6",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "uh&*3BS&}Ibav!5ZjTVj",
+            "rule": {
+              "dpi": {
+                "dpi_protocol": "eaq"
+              }
+            }
+          }
+        }
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv4",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "0;oPA_TjImhWFgMg[eyD1(v[ZrV~t[mn=8NiBI:5PHBkJT#U,89Vfws7x4b(QcJ<=A_OjB&GBVQi1B%M:J^0=)b&$7$R8LP~sJ"
+          }
+        }
+      }
+    },
+    "2": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv4",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "rSXR<Qr3lC5bWq%;hCc9Lzm<w8}_%UV7f]>}4E2V{H[(4o)ND1rZ-GN71)G3JE}R1]7$GIiHq]Q{e[Ps4ZzjKn$HFYo^[3pPm"
+          }
+        }
+      }
+    },
+    "3": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv4",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "t<SkTq;=,Wk,ql8[7G1+pjC6$[~3U<]Cc}yg+5+zK}XC]ooirPt=*xo1+9z`NnED!i.%&kgX>V@EJ@eRo>"
+          }
+        }
+      }
+    },
+    "4": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv6",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "rHquu@lyG^:#!k~rdxAv+m0LyXt"
+          }
+        }
+      }
+    },
+    "5": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv6",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "k<VoQCgbIm8Mqm%NeSv0;+<,^7Vub4Nc.qx;RTx;Lo2csPucl_t1,R9wvYa"
+          }
+        }
+      }
+    },
+    "6": {
+      "type": "POST",
+      "endpoint": "/acl/acl_ipv6",
+      "schema": {
+        "action": {
+          "delete": {
+            "acl_name": "uh&*3BS&}Ibav!5ZjTVj"
+          }
+        }
+      }
+    }
+  }
+}

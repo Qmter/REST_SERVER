@@ -16,7 +16,7 @@ def get_db():
             cursorclass=pymysql.cursors.DictCursor
         )
     except Exception as e:
-        raise HTTPException(500, f"MySQL server is not started")
+        raise HTTPException(500, f"MySQL server is not started:{e}")
 
     try:
         yield connection

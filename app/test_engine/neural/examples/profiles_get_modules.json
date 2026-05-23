@@ -1,0 +1,12 @@
+{
+  "1": {
+    "description": "Get modules",
+    "1.1": {
+      "type": "GET",
+      "endpoint": "/profiles/get_modules",
+      "arguments": {},
+      "errCode": 0,
+      "httpCode": 200
+    }
+  }
+}

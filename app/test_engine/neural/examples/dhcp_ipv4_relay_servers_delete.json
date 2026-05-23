@@ -1,0 +1,113 @@
+{
+  "1": {
+    "description": "Deleting server from non-existing relay",
+    "1.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/servers/delete",
+      "schema": {
+        "relay_name": "NoRelayExist",
+        "ip_address": "1.1.1.1"
+      },
+      "errCode": -1,
+      "httpCode": 500
+    }
+  },
+  "2": {
+    "description": "Deleting non-existing server from relay",
+    "2.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "UG0`o=HSn~419uCu8ftm!%)8L@>x{8~gKAT;rn^V`jrlzH:piA7>yM]"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "2.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/servers/delete",
+      "schema": {
+        "relay_name": "UG0`o=HSn~419uCu8ftm!%)8L@>x{8~gKAT;rn^V`jrlzH:piA7>yM]",
+        "ip_address": "1.1.1.1"
+      },
+      "errCode": -1,
+      "httpCode": 500
+    },
+    "2.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "UG0`o=HSn~419uCu8ftm!%)8L@>x{8~gKAT;rn^V`jrlzH:piA7>yM]"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "3": {
+    "description": "Deleting server",
+    "3.1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/add",
+      "schema": {
+        "relay_name": "d+w%-bzQKo=qS"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/servers/add",
+      "schema": {
+        "relay_name": "d+w%-bzQKo=qS",
+        "ip_address": "254.183.8.4"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.3": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/servers/delete",
+      "schema": {
+        "relay_name": "d+w%-bzQKo=qS",
+        "ip_address": "254.183.8.4"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.4": {
+      "type": "GET",
+      "endpoint": "/dhcp/ipv4/relay/servers/list",
+      "arguments": {
+        "relay_name": "d+w%-bzQKo=qS"
+      },
+      "validation": [],
+      "errCode": 0,
+      "httpCode": 200
+    },
+    "3.5": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "d+w%-bzQKo=qS"
+      },
+      "errCode": 0,
+      "httpCode": 200
+    }
+  },
+  "AFTER-TEST": {
+    "1": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "UG0`o=HSn~419uCu8ftm!%)8L@>x{8~gKAT;rn^V`jrlzH:piA7>yM]"
+      }
+    },
+    "2": {
+      "type": "POST",
+      "endpoint": "/dhcp/ipv4/relay/delete",
+      "schema": {
+        "relay_name": "d+w%-bzQKo=qS"
+      }
+    }
+  }
+}
