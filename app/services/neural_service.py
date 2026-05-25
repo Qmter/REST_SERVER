@@ -4,6 +4,7 @@ from typing import Dict, Any, Optional, List
 
 from app.test_engine.neural import NeuralTestGenerator
 from app.test_engine.utils.resolve_scheme import ResolveScheme
+from app.repositories.connection_repo import get_openapi
 
 
 # Глобальный экземпляр генератора (ленивая инициализация)
@@ -21,9 +22,10 @@ def get_neural_generator(examples_dir: str = "./app/test_engine/neural/examples"
 
 
 def generate_neural_test(
+    db,
+    id_workspace: int,
     endpoint: str,
     method: str,
-    openapi_spec: Dict[str, Any],
     examples_dir: str = "./app/test_engine/neural/examples"
 ) -> Dict[str, Any]:
     """
@@ -32,7 +34,6 @@ def generate_neural_test(
     Args:
         endpoint: Путь эндпоинта
         method: HTTP метод
-        openapi_spec: OpenAPI спецификация
         examples_dir: Путь к примерам тестов
 
     Returns:
@@ -42,9 +43,18 @@ def generate_neural_test(
         # Инициализируем генератор
         generator = get_neural_generator(examples_dir)
 
+        openapi_spec = get_openapi(db=db, id_workspace=id_workspace)
+
+        if not openapi_spec or openapi_spec is None:
+            raise HTTPException(404, "OpenAPI not found")
+
+        content_openapi = openapi_spec['openapi_schema']
+        if isinstance(content_openapi, str):
+            content_openapi = json.loads(content_openapi)
+
         # Разрешаем схему эндпоинта
         resolved_schema = ResolveScheme.resolve_endpoint(
-            openapi_file=openapi_spec,
+            openapi_file=content_openapi,
             endpoint_path=endpoint,
             method=method.lower()
         )

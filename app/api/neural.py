@@ -17,8 +17,9 @@ from app.core.dependencies import get_current_user
 router = APIRouter()
 
 
-@router.post("/generate", response_model=NeuralTestGenerateResponse)
+@router.post("/{id_workspace}/generate", response_model=NeuralTestGenerateResponse)
 def generate_test(
+    id_workspace: int,
     request: NeuralTestGenerateRequest = Body(...),
     db=Depends(get_db),
     user=Depends(get_current_user)
@@ -32,9 +33,10 @@ def generate_test(
     - openapi_spec: OpenAPI спецификация
     """
     result = generate_neural_test(
+        db=db,
+        id_workspace=id_workspace,
         endpoint=request.endpoint,
         method=request.method,
-        openapi_spec=request.openapi_spec
     )
 
     return NeuralTestGenerateResponse(

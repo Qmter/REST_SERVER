@@ -6,7 +6,6 @@ class NeuralTestGenerateRequest(BaseModel):
     """Запрос на генерацию теста через нейросеть."""
     endpoint: str
     method: str = "post"
-    openapi_spec: Dict[str, Any]
     seed: Optional[int] = 42
 
 
@@ -20,5 +19,4 @@ class NeuralTestGenerateResponse(BaseModel):
 class NeuralTestBatchGenerateRequest(BaseModel):
     """Запрос на пакетную генерацию тестов."""
     endpoints: list[Dict[str, Any]]
-    openapi_spec: Dict[str, Any]
     """Каждый элемент содержит: endpoint, method"""

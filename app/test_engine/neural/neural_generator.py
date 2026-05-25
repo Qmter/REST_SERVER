@@ -147,6 +147,9 @@ class NeuralTestGenerator:
         try:
             # Строим промпт
             prompt = self._build_prompt(endpoint, method, resolved_schema)
+            print("#" * 100)
+            print(prompt)
+            print("#" * 100)
 
             # Отправляем запрос к Ollama API
             ollama_url = "http://localhost:11434/api/generate"
@@ -162,8 +165,10 @@ class NeuralTestGenerator:
                 }
             }
 
-            response = requests.post(ollama_url, json=payload, timeout=120)
+            response = requests.post(ollama_url, json=payload)
             response.raise_for_status()
+            print(response.status)
+            print(response.json())
 
             result = response.json()
             generated_text = result.get("response", "")

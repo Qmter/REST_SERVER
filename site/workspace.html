@@ -32,7 +32,7 @@
           <img src="img/icons/admin_ico.svg" alt="Админ панель" class="sidebar-icon">
           <span>Админ панель</span>
         </li>
-        
+
         <li onclick="logout()">
           <img src="img/icons/Exit.svg" alt="Выйти" class="sidebar-icon">
           <span>Выйти</span>
@@ -95,6 +95,7 @@
                   </select>
                 </div>
                 <button type="button" id="runAllTestsBtn" style="display:none;">Запустить все тесты</button>
+                <button type="button" id="generateSingleTestBtn" style="display:none;">Сгенерировать 1 тест</button>
               </div>
             </div>
             <div id="testList" class="scenario-list"></div>
@@ -264,6 +265,33 @@
         <button type="button" class="ghost" id="logDownloadBtn">Сохранить лог</button>
         <button type="button" id="logModalClose">Закрыть</button>
       </div>
+    </div>
+  </div>
+
+  <!-- generate single test modal -->
+  <div id="generateSingleTestModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal">
+      <h3>Сгенерировать тест через нейросеть</h3>
+      <form id="generateSingleTestForm" class="stacked">
+        <label for="neuralEndpoint">Путь эндпоинта</label>
+        <input type="text" id="neuralEndpoint" placeholder="/api/v1/users" required>
+
+        <label for="neuralMethod">HTTP метод</label>
+        <select id="neuralMethod">
+          <option value="get">GET</option>
+          <option value="post">POST</option>
+          <option value="put">PUT</option>
+          <option value="delete">DELETE</option>
+          <option value="patch">PATCH</option>
+        </select>
+
+        <div id="generateSingleTestStatus" class="muted"></div>
+
+        <div class="actions">
+          <button type="button" class="ghost" id="generateSingleTestCancel">Отмена</button>
+          <button type="submit">Сгенерировать</button>
+        </div>
+      </form>
     </div>
   </div>
 
