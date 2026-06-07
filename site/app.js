@@ -168,6 +168,122 @@ function updateMembersSummary() {
     : "<div class='muted'>Пока никого нет</div>";
 }
 
+const ONBOARDING_STORAGE_KEY = "restTesterOnboardingSeen";
+
+function isOnboardingNeeded() {
+  try {
+    return localStorage.getItem(ONBOARDING_STORAGE_KEY) !== "1";
+  } catch (err) {
+    console.warn("Onboarding storage unavailable", err);
+    return false;
+  }
+}
+
+function markOnboardingSeen() {
+  try {
+    localStorage.setItem(ONBOARDING_STORAGE_KEY, "1");
+  } catch (err) {
+    console.warn("Failed to save onboarding state", err);
+  }
+}
+
+function removeOnboardingOverlay() {
+  const existing = document.getElementById("onboardingOverlay");
+  if (existing) {
+    window.removeEventListener("resize", updateOnboardingPositions);
+    existing.remove();
+  }
+}
+
+function updateOnboardingPositions() {
+  const overlay = document.getElementById("onboardingOverlay");
+  if (!overlay) return;
+  overlay.querySelectorAll(".onboarding-step").forEach((step) => {
+    const selector = step.dataset.targetSelector;
+    const target = selector ? document.querySelector(selector) : null;
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    const stepRect = step.getBoundingClientRect();
+    const margin = 16;
+    const targetRight = rect.right + margin;
+    const targetLeft = rect.left - stepRect.width - margin;
+    const useLeft = targetRight + stepRect.width + margin > window.innerWidth && targetLeft >= margin;
+    const left = useLeft ? Math.max(margin, targetLeft) : Math.min(window.innerWidth - stepRect.width - margin, targetRight);
+    const top = Math.min(
+      Math.max(margin, rect.top),
+      window.innerHeight - stepRect.height - margin
+    );
+    step.style.top = `${top}px`;
+    step.style.left = `${left}px`;
+    step.classList.toggle("onboarding-step-reverse", useLeft);
+  });
+}
+
+function createOnboardingStep(options) {
+  const step = document.createElement("div");
+  step.className = "onboarding-step";
+  step.dataset.targetSelector = options.selector || "";
+  step.innerHTML = `
+    <div class="onboarding-step-badge">${options.badge}</div>
+    <div class="onboarding-step-content">
+      <strong>${options.title}</strong>
+      <p>${options.description}</p>
+    </div>
+  `;
+  return step;
+}
+
+function showOnboardingHints() {
+  if (!isOnboardingNeeded()) return;
+  if (!workspaceForm || !workspaceListOwn) return;
+
+  removeOnboardingOverlay();
+
+  const overlay = document.createElement("div");
+  overlay.id = "onboardingOverlay";
+  overlay.className = "onboarding-overlay";
+  overlay.innerHTML = `
+    <div class="onboarding-panel">
+      <h2>Добро пожаловать!</h2>
+      <p>Первый раз на сайте? Вот основные шаги.</p>
+      <ol>
+        <li>Создайте рабочее пространство.</li>
+        <li>Откройте проект, чтобы добавить подключение и сценарии.</li>
+        <li>Запустите тесты и просмотрите результат.</li>
+      </ol>
+      <button type="button" id="onboardingCloseBtn">Понятно</button>
+    </div>
+  `;
+
+  const step1 = createOnboardingStep({
+    selector: "#workspaceForm",
+    badge: "1",
+    title: "Создать рабочее пространство",
+    description: "Введите название и нажмите «Создать», чтобы начать работу."
+  });
+  const step2 = createOnboardingStep({
+    selector: "#workspaceListOwn",
+    badge: "2",
+    title: "Открыть проект",
+    description: "Ваши проекты появятся здесь. Нажмите на карточку, чтобы перейти дальше."
+  });
+
+  overlay.appendChild(step1);
+  overlay.appendChild(step2);
+  document.body.appendChild(overlay);
+
+  const closeBtn = document.getElementById("onboardingCloseBtn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      markOnboardingSeen();
+      removeOnboardingOverlay();
+    });
+  }
+
+  window.addEventListener("resize", updateOnboardingPositions);
+  setTimeout(updateOnboardingPositions, 50);
+}
+
 function inferNotifyStatus(text) {
   const value = String(text || "").toLowerCase();
   if (
@@ -2623,7 +2739,7 @@ if (currentPath.includes("dashboard")) {
     if (hashTab && document.getElementById(hashTab)) {
       openTab(hashTab);
     }
-    loadWorkspaces();
+    loadWorkspaces().then(() => showOnboardingHints());
   });
 } else if (currentPath.includes("workspace")) {
   ensureAuth().then((ok) => {
