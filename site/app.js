@@ -172,7 +172,7 @@ function updateMembersSummary() {
   membersSummary.innerHTML = count
     ? `
       <div><strong>Участников:</strong> ${count}</div>
-      <div><strong>Owner:</strong> ${owners.join(", ") || "—"}</div>
+      <div><strong>Владелец:</strong> ${owners.join(", ") || "—"}</div>
     `
     : "<div class='muted'>Пока никого нет</div>";
 }

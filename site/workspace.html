@@ -139,7 +139,7 @@
 
           <form id="connectionForm" class="stacked connection-form">
             <div class="form-field">
-              <label for="connectionBaseUrl">Base URL</label>
+              <label for="connectionBaseUrl">URL Маршрутизатора</label>
               <input
                 type="text"
                 id="connectionBaseUrl"
@@ -208,13 +208,13 @@
 
           <form id="memberForm" class="stacked card-subsection">
             <label for="memberUsername">Логин пользователя</label>
-            <input type="text" id="memberUsername" placeholder="username" required>
+            <input type="text" id="memberUsername" placeholder="Логин" required>
 
             <label for="memberAccess">Доступ</label>
             <select id="memberAccess">
-              <option value="viewer">Viewer</option>
-              <option value="editor">Editor</option>
-              <option value="owner">Owner</option>
+              <option value="viewer">Наблюдатель</option>
+              <option value="editor">Редактор</option>
+              <option value="owner">Владелец</option>
             </select>
 
             <button type="submit">Добавить/обновить доступ</button>

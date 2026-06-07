@@ -158,6 +158,9 @@ async function loadStatistics() {
       if (statisticsStatusChart) statisticsStatusChart.destroy();
       if (statisticsObjectsChart) statisticsObjectsChart.destroy();
 
+      const chartTextColor = getComputedStyle(document.body).getPropertyValue("--text-base").trim() || "#0f172a";
+      const chartGridColor = getComputedStyle(document.body).getPropertyValue("--panel-border").trim() || "rgba(148,163,184,0.2)";
+
       if (statusCanvas) {
         statisticsStatusChart = new Chart(statusCanvas, {
           type: "doughnut",
@@ -175,9 +178,12 @@ async function loadStatistics() {
             maintainAspectRatio: false,
             plugins: {
               legend: {
-                labels: { color: "#f8fafc" }
+                labels: { color: chartTextColor }
               },
               tooltip: {
+                titleColor: chartTextColor,
+                bodyColor: chartTextColor,
+                borderColor: chartGridColor,
                 callbacks: {
                   label: ctx => `${ctx.label}: ${ctx.parsed} (${Math.round(ctx.raw / Math.max(1, passedTests + failedTests) * 100)}%)`
                 }
@@ -204,12 +210,17 @@ async function loadStatistics() {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              x: { ticks: { color: "#f8fafc" }, grid: { display: false } },
-              y: { ticks: { color: "#f8fafc" }, grid: { color: "rgba(148,163,184,0.2)" }, beginAtZero: true }
+              x: { ticks: { color: chartTextColor }, grid: { display: false } },
+              y: { ticks: { color: chartTextColor }, grid: { color: chartGridColor }, beginAtZero: true }
             },
             plugins: {
               legend: { display: false },
-              tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}` } }
+              tooltip: {
+                titleColor: chartTextColor,
+                bodyColor: chartTextColor,
+                borderColor: chartGridColor,
+                callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}` }
+              }
             }
           }
         });
@@ -252,7 +263,7 @@ async function loadUsers() {
 
     users.forEach(user => {
       const row = document.createElement("tr");
-      const roleName = ROLE_NAMES[user.id_role] || `Role ${user.id_role}`;
+      const roleName = ROLE_NAMES[user.id_role] || `Роль ${user.id_role}`;
       const createdAt = user.created_at ? new Date(user.created_at).toLocaleString("ru-RU") : "-";
 
       // Кнопка редактирования
@@ -741,8 +752,8 @@ function renderJsonModalContent(data) {
     // 2. ОБРАБОТКА СИСТЕМНЫХ ЛОГОВ (SYSTEM LOGS)
     if (data.type === 'system') {
         const fields = [
-            { key: 'old_value', label: 'OLD VALUE' },
-            { key: 'new_value', label: 'NEW VALUE' }
+            { key: 'old_value', label: 'Старое значение' },
+            { key: 'new_value', label: 'Новое значение' }
         ];
 
         fields.forEach(field => {
@@ -764,7 +775,7 @@ function renderJsonModalContent(data) {
             if (parsed === null) {
                 const span = document.createElement("span");
                 span.className = "null";
-                span.textContent = "null";
+                span.textContent = "Ничего не было";
                 block.appendChild(span);
             } else if (typeof parsed === 'string') {
                 const pre = document.createElement("pre");

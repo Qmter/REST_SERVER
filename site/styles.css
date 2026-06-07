@@ -247,6 +247,12 @@ body {
   --editor-active-line: #eef4ff;
   --editor-selection: rgba(59, 130, 246, 0.18);
   --editor-cursor: #0f172a;
+  --stat-card-bg: #ffffff;
+  --stat-card-title: #6b7280;
+  --stat-card-value: #0f172a;
+  --chart-card-bg: #ffffff;
+  --chart-card-title: #0f172a;
+  --chart-card-text: #0f172a;
 }
 
 body.theme-light {
@@ -276,7 +282,7 @@ body.theme-light {
 body.theme-dark {
   --sidebar-icon-filter: brightness(0) invert(1);
   --bg-base: #1a1a1a;
-  --text-base: #e2e8f0;
+  --text-base: #e5e7eb;
   --panel-bg: #1f1f1f;
   --panel-border: #2a2a2a;
   --accent: #f43f5e;
@@ -295,6 +301,12 @@ body.theme-dark {
   --editor-active-line: #1f2937;
   --editor-selection: rgba(244, 63, 94, 0.22);
   --editor-cursor: #f8fafc;
+  --stat-card-bg: #1f2937;
+  --stat-card-title: #9ca3af;
+  --stat-card-value: #f8fafc;
+  --chart-card-bg: #111827;
+  --chart-card-title: #f8fafc;
+  --chart-card-text: #e5e7eb;
 }
 
 /* --- Login Styles --- */
@@ -1174,6 +1186,7 @@ body.theme-dark .theme-switcher {
   white-space: pre-wrap;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 14px;
+  color: var(--text-base);
   line-height: 1.6;
   box-shadow: var(--shadow);
   overflow-x: auto;
@@ -1187,7 +1200,7 @@ body.theme-dark .theme-switcher {
   padding: 2px 8px;
   border-radius: 999px;
   background: var(--accent-soft);
-  color: var(--accent-strong);
+  color: var(--text-base);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -1469,6 +1482,7 @@ body.theme-dark .theme-switcher {
   min-height: 300px;
   max-height: 70vh;
   height: 50vh;
+  color: var(--text-base);
   resize: vertical;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 14px;
@@ -2451,18 +2465,19 @@ body.theme-dark .login-container .btn-integration:hover {
   .stat-card {
     padding: 18px;
     border-radius: 16px;
-    background: #1f2937;
+    background: var(--stat-card-bg);
+    color: var(--stat-card-text);
     box-shadow: 0 10px 25px rgba(0,0,0,.08);
   }
   .stat-card h3 {
     margin: 0 0 8px;
     font-size: 14px;
-    color: #9ca3af;
+    color: var(--stat-card-title);
   }
   .stat-card .stat-value {
     font-size: 32px;
     font-weight: 700;
-    color: #f8fafc;
+    color: var(--stat-card-value);
   }
   .statistics-charts {
     display: grid;
@@ -2472,13 +2487,14 @@ body.theme-dark .login-container .btn-integration:hover {
   .chart-card {
     padding: 20px;
     border-radius: 16px;
-    background: #111827;
+    background: var(--chart-card-bg);
+    color: var(--chart-card-text);
     box-shadow: 0 10px 25px rgba(0,0,0,.08);
   }
   .chart-card h2 {
     margin: 0 0 14px;
     font-size: 18px;
-    color: #f8fafc;
+    color: var(--chart-card-title);
   }
   .chart-card canvas {
     width: 100% !important;
