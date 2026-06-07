@@ -1,6 +1,6 @@
 const API_BASE = localStorage.getItem("apiBase") || "http://localhost:8000";
 
-const themeSelect = document.getElementById("themeSelect");
+const themeToggle = document.getElementById("themeToggle");
 const loginForm = document.getElementById("loginForm");
 const loginError = document.getElementById("error");
 const sidebarUserName = document.getElementById("sidebarUserName");
@@ -73,8 +73,6 @@ const scenarioSort = document.getElementById("scenarioSort");
 const testList = document.getElementById("testList");
 const testSearch = document.getElementById("testSearch");
 const testSort = document.getElementById("testSort");
-const generateTestsBtn = document.getElementById("generateTestsBtn");
-const generateSingleTestBtn = document.getElementById("generateSingleTestBtn");
 const runAllTestsBtn = document.getElementById("runAllTestsBtn");
 const workspaceLogHistoryBtn = document.getElementById("workspaceLogHistoryBtn");
 const workspaceLogHistoryModal = document.getElementById("workspaceLogHistoryModal");
@@ -101,13 +99,6 @@ const chooseOpenapiBtn = document.getElementById("chooseOpenapiBtn");
 const uploadOpenapiBtn = document.getElementById("uploadOpenapiBtn");
 const deleteOpenapiBtn = document.getElementById("deleteOpenapiBtn");
 const openapiStatus = document.getElementById("openapiStatus");
-// generate single test modal elements
-const generateSingleTestModal = document.getElementById("generateSingleTestModal");
-const generateSingleTestForm = document.getElementById("generateSingleTestForm");
-const generateSingleTestCancel = document.getElementById("generateSingleTestCancel");
-const generateSingleTestStatus = document.getElementById("generateSingleTestStatus");
-const neuralEndpoint = document.getElementById("neuralEndpoint");
-const neuralMethod = document.getElementById("neuralMethod");
 
 let currentWorkspaceId = null;
 let currentConnectionId = null;
@@ -754,24 +745,6 @@ async function bootstrapWorkspacePage() {
         };
       }
     }
-    if (generateSingleTestBtn) {
-      const canGenerate = currentAccessType !== "viewer";
-      generateSingleTestBtn.style.display = canGenerate ? "inline-flex" : "none";
-      if (canGenerate) {
-        generateSingleTestBtn.onclick = async () => {
-          if (generateSingleTestModal) generateSingleTestModal.classList.add("active");
-        };
-      }
-    }
-    if (runAllTestsBtn) {
-      const canRun = currentAccessType !== "viewer";
-      runAllTestsBtn.style.display = canRun ? "inline-flex" : "none";
-      if (canRun) {
-        runAllTestsBtn.onclick = async () => {
-          await runAllWorkspaceTests(id, runAllTestsBtn);
-        };
-      }
-    }
     if (workspaceLogHistoryBtn) {
       workspaceLogHistoryBtn.onclick = async () => {
         if (workspaceLogHistoryModal) workspaceLogHistoryModal.classList.add("active");
@@ -999,83 +972,6 @@ async function generateAllScenarioTests(workspaceId, btn) {
       btn.textContent = prevText || "Сгенерировать все тесты";
     }
   }
-}
-
-async function generateSingleNeuralTest(endpoint, method) {
-  if (!currentWorkspaceId) {
-    throw new Error("Workspace не выбран");
-  }
-
-  // Вызываем API нейронной генерации
-  const result = await api(`/neural/${currentWorkspaceId}/generate`, {
-    method: "POST",
-    body: JSON.stringify({
-      endpoint: endpoint,
-      method: method
-    })
-  });
-
-  if (!result.success || !result.test) {
-    throw new Error(result.error || "Не удалось сгенерировать тест");
-  }
-
-  return result.test;
-}
-
-async function handleGenerateSingleTestSubmit(e) {
-  e.preventDefault();
-
-  const endpoint = neuralEndpoint?.value.trim();
-  const method = neuralMethod?.value || "post";
-
-  if (!endpoint) {
-    if (generateSingleTestStatus) generateSingleTestStatus.textContent = "Введите путь эндпоинта";
-    return;
-  }
-
-  if (generateSingleTestStatus) generateSingleTestStatus.textContent = "Генерация теста...";
-
-  const submitBtn = generateSingleTestForm?.querySelector('button[type="submit"]');
-
-  try {
-    if (submitBtn) setButtonLoading(submitBtn, true, "Генерация теста...");
-    await generateSingleNeuralTest(endpoint, method);
-
-    showInfoModal(`Тест успешно сгенерирован для ${method.toUpperCase()} ${endpoint}`);
-
-    if (generateSingleTestModal) generateSingleTestModal.classList.remove("active");
-    if (neuralEndpoint) neuralEndpoint.value = "";
-    if (neuralMethod) neuralMethod.value = "get";
-    if (generateSingleTestStatus) generateSingleTestStatus.textContent = "";
-
-    await loadTests(currentWorkspaceId);
-  } catch (err) {
-    if (generateSingleTestStatus) generateSingleTestStatus.textContent = err.message;
-    showInfoModal(`Ошибка генерации: ${err.message}`);
-  } finally {
-    if (submitBtn) setButtonLoading(submitBtn, false);
-  }
-}
-
-if (generateSingleTestForm) {
-  generateSingleTestForm.addEventListener("submit", handleGenerateSingleTestSubmit);
-}
-if (generateSingleTestCancel) {
-  generateSingleTestCancel.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (generateSingleTestModal) generateSingleTestModal.classList.remove("active");
-    if (generateSingleTestStatus) generateSingleTestStatus.textContent = "";
-    if (neuralEndpoint) neuralEndpoint.value = "";
-    if (neuralMethod) neuralMethod.value = "get";
-  });
-}
-if (generateSingleTestModal) {
-  generateSingleTestModal.addEventListener("click", (e) => {
-    if (e.target === generateSingleTestModal) {
-      generateSingleTestModal.classList.remove("active");
-      if (generateSingleTestStatus) generateSingleTestStatus.textContent = "";
-    }
-  });
 }
 
 async function loadTests(workspaceId) {
@@ -2326,8 +2222,9 @@ function applyTheme(theme) {
   document.body.classList.add(`theme-${normalized}`);
   localStorage.setItem("theme", normalized);
 
-  if (themeSelect && themeSelect.value !== normalized) {
-    themeSelect.value = normalized;
+  if (themeToggle) {
+    themeToggle.textContent = normalized === "light" ? "🌙" : "☀️";
+    themeToggle.title = normalized === "light" ? "Переключить на светлую тему" : "Переключить на тёмную тему";
   }
 
   const sidebarLogo = document.querySelector(".sidebar-logo img");
@@ -2347,9 +2244,11 @@ function applyTheme(theme) {
 
 applyTheme(localStorage.getItem("theme") || "dark");
 
-if (themeSelect) {
-  themeSelect.addEventListener("change", (e) => {
-    applyTheme(e.target.value);
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const currentTheme = localStorage.getItem("theme") || "dark";
+    const newTheme = currentTheme === "light" ? "dark" : "light";
+    applyTheme(newTheme);
   });
 }
 

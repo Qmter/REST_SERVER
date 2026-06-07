@@ -411,7 +411,7 @@ body.theme-dark .login-container button:hover {
 .theme-switcher {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 8px;
   margin: 0 0 12px;
   padding: 10px 12px;
@@ -420,18 +420,24 @@ body.theme-dark .login-container button:hover {
   border-radius: 8px;
 }
 
-.theme-switcher label {
-  font-size: 14px;
-  color: inherit;
-}
-
-.theme-switcher select {
+.theme-toggle {
   flex: 1;
-  padding: 6px 8px;
+  padding: 8px 12px;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: #1f2937;
   color: #e2e8f0;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  background: #374151;
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .sidebar.collapsed .theme-switcher {
@@ -612,10 +618,15 @@ body.theme-light .theme-switcher {
   border-color: #cbd5e1;
 }
 
-body.theme-light .theme-switcher select {
+body.theme-light .theme-toggle {
   background: #fff;
   color: #0f172a;
   border-color: #cbd5e1;
+}
+
+body.theme-light .theme-toggle:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
 }
 
 body.theme-light .sidebar-toggle {
@@ -634,15 +645,20 @@ body.theme-dark .sidebar {
   box-shadow: 0 8px 24px rgba(255, 255, 255, 0.08);
 }
 
-body.theme-dark .theme-switcher select {
+body.theme-dark .theme-switcher {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.theme-dark .theme-toggle {
   background: #1f2937;
   color: #e2e8f0;
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-body.theme-dark .theme-switcher {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.08);
+body.theme-dark .theme-toggle:hover {
+  background: #374151;
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .content {

@@ -8,7 +8,6 @@ from app.api import connections
 from app.api import scenarios
 from app.api import tests
 from app.api import admin
-from app.api import neural
 
 
 
@@ -68,10 +67,4 @@ app.include_router(
     connections.router,
     prefix="/connections",
     tags=["connections"]
-)
-
-app.include_router(
-    neural.router,
-    prefix="/neural",
-    tags=["neural"]
 )
